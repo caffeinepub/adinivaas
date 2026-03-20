@@ -48,8 +48,8 @@ export default function TribalSangiSection() {
             <div
               className="w-12 h-12 rounded-full flex items-center justify-center"
               style={{
-                background: "oklch(0.52 0.135 38)",
-                boxShadow: "0 4px 12px rgba(163,74,46,0.35)",
+                background: "oklch(0.72 0.13 145)",
+                boxShadow: "0 4px 12px rgba(60,160,80,0.30)",
               }}
             >
               <Lock size={22} color="white" />
@@ -68,7 +68,7 @@ export default function TribalSangiSection() {
             <motion.button
               whileTap={{ scale: 0.96 }}
               className="px-6 py-2.5 rounded-full text-sm font-600 text-white transition-opacity hover:opacity-90"
-              style={{ background: "oklch(0.52 0.135 38)", fontWeight: 600 }}
+              style={{ background: "oklch(0.62 0.14 145)", fontWeight: 600 }}
               data-ocid="tribal_sangi.primary_button"
             >
               Subscribe Now

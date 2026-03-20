@@ -55,7 +55,7 @@ export default function EdTechSection() {
           <Badge
             className="text-xs px-2 py-0.5 flex items-center gap-1"
             style={{
-              background: "oklch(0.52 0.135 38)",
+              background: "oklch(0.72 0.16 145)",
               color: "white",
               border: "none",
             }}
@@ -78,7 +78,7 @@ export default function EdTechSection() {
           type="button"
           className="mt-4 w-full py-2.5 rounded-xl text-sm transition-opacity hover:opacity-80"
           style={{
-            background: "oklch(0.52 0.135 38)",
+            background: "oklch(0.72 0.16 145)",
             color: "white",
             fontWeight: 600,
           }}
