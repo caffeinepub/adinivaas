@@ -12,7 +12,14 @@ export default function EdTechSection() {
   return (
     <section className="px-4 mb-6">
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-base text-foreground" style={{ fontWeight: 700 }}>
+        <h2
+          className="text-base text-foreground flex items-center gap-1.5"
+          style={{ fontWeight: 700 }}
+        >
+          <GraduationCap
+            size={16}
+            style={{ color: "oklch(0.52 0.135 38)", flexShrink: 0 }}
+          />
           EdTech
         </h2>
       </div>

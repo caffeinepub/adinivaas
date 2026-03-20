@@ -1,3 +1,4 @@
+import { Briefcase } from "lucide-react";
 import { motion } from "motion/react";
 import FeedSection from "./FeedSection";
 
@@ -30,7 +31,7 @@ const mockBiz = [
 
 export default function TribalpreneurSection() {
   return (
-    <FeedSection title="Tribalpreneurs">
+    <FeedSection title="Tribalpreneurs" icon={Briefcase}>
       <div className="flex gap-3 overflow-x-auto px-4 pb-2 scrollbar-hide">
         {mockBiz.map((biz, idx) => (
           <motion.div

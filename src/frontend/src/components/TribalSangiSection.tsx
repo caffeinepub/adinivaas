@@ -1,4 +1,4 @@
-import { Lock } from "lucide-react";
+import { HeartHandshake, Lock } from "lucide-react";
 import { motion } from "motion/react";
 import FeedSection from "./FeedSection";
 
@@ -11,7 +11,7 @@ const mockSangi = [
 
 export default function TribalSangiSection() {
   return (
-    <FeedSection title="Tribal Sangi">
+    <FeedSection title="Tribal Sangi" icon={HeartHandshake}>
       <div className="px-4">
         <div
           className="relative rounded-2xl overflow-hidden"
@@ -20,7 +20,6 @@ export default function TribalSangiSection() {
             boxShadow: "0 6px 18px rgba(0,0,0,0.08)",
           }}
         >
-          {/* Blurred cards grid */}
           <div className="grid grid-cols-2 gap-1">
             {mockSangi.map((item, idx) => (
               <div
@@ -37,7 +36,6 @@ export default function TribalSangiSection() {
               </div>
             ))}
           </div>
-          {/* Overlay */}
           <div
             className="absolute inset-0 flex flex-col items-center justify-center gap-3"
             style={{

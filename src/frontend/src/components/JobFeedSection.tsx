@@ -1,4 +1,4 @@
-import { Image } from "lucide-react";
+import { Image, Users } from "lucide-react";
 import { motion } from "motion/react";
 import FeedSection from "./FeedSection";
 
@@ -31,7 +31,7 @@ const mockJobs = [
 
 export default function JobFeedSection() {
   return (
-    <FeedSection title="Job Feed">
+    <FeedSection title="Job Feed" icon={Users}>
       <div className="flex gap-3 overflow-x-auto px-4 pb-2 scrollbar-hide">
         {mockJobs.map((job, idx) => (
           <motion.div

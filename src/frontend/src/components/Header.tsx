@@ -1,8 +1,17 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Bell, Heart } from "lucide-react";
-import { useState } from "react";
+import { Bell, ChevronDown, Heart } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import LikesPopover from "./LikesPopover";
 import NotificationsPopover from "./NotificationsPopover";
+
+const LANGUAGES = [
+  { code: "en", label: "English" },
+  { code: "hi", label: "Hindi" },
+  { code: "kru", label: "Kurukh" },
+  { code: "sat", label: "Santhal" },
+  { code: "kha", label: "Kharia" },
+  { code: "mun", label: "Mundari" },
+];
 
 interface HeaderProps {
   onProfileClick: () => void;
@@ -17,6 +26,19 @@ export default function Header({
 }: HeaderProps) {
   const [likesOpen, setLikesOpen] = useState(false);
   const [notifsOpen, setNotifsOpen] = useState(false);
+  const [langOpen, setLangOpen] = useState(false);
+  const [selectedLang, setSelectedLang] = useState(LANGUAGES[0]);
+  const langRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleOutside(e: MouseEvent) {
+      if (langRef.current && !langRef.current.contains(e.target as Node)) {
+        setLangOpen(false);
+      }
+    }
+    if (langOpen) document.addEventListener("mousedown", handleOutside);
+    return () => document.removeEventListener("mousedown", handleOutside);
+  }, [langOpen]);
 
   const toggleLikes = () => {
     setNotifsOpen(false);
@@ -44,7 +66,58 @@ export default function Header({
         >
           ADINIVAAS
         </span>
+
+        {/* Language Selector */}
+        <div ref={langRef} className="relative">
+          <button
+            type="button"
+            onClick={() => setLangOpen((v) => !v)}
+            className="flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-xs font-medium border transition-colors"
+            style={{
+              borderColor: "oklch(0.72 0.08 60)",
+              color: "oklch(0.42 0.12 40)",
+              background: langOpen
+                ? "oklch(0.93 0.04 70)"
+                : "oklch(0.97 0.02 70)",
+            }}
+          >
+            <span className="uppercase">{selectedLang.code}</span>
+            <ChevronDown size={8} style={{ opacity: 0.7 }} />
+          </button>
+
+          {langOpen && (
+            <div
+              className="absolute left-0 top-full mt-1 rounded-xl shadow-lg border py-1 z-50 min-w-[120px]"
+              style={{
+                background: "white",
+                borderColor: "oklch(0.88 0.05 60)",
+              }}
+            >
+              {LANGUAGES.map((lang) => (
+                <button
+                  key={lang.code}
+                  type="button"
+                  className="w-full text-left px-3 py-1.5 text-xs font-medium transition-colors hover:bg-amber-50"
+                  style={{
+                    color:
+                      selectedLang.code === lang.code
+                        ? "oklch(0.52 0.135 38)"
+                        : "oklch(0.35 0.05 40)",
+                    fontWeight: selectedLang.code === lang.code ? 700 : 400,
+                  }}
+                  onClick={() => {
+                    setSelectedLang(lang);
+                    setLangOpen(false);
+                  }}
+                >
+                  {lang.label}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
+
       <div className="flex items-center gap-3 relative">
         <div className="relative">
           <button

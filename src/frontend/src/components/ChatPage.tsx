@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ArrowLeft, Heart, Send } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 interface ChatMessage {
   id: number;
@@ -23,7 +23,7 @@ interface ChatItem {
   messages: ChatMessage[];
 }
 
-const CHATS: ChatItem[] = [
+const BASE_CHATS: ChatItem[] = [
   {
     id: 1,
     name: "Guru Ramesh Gond",
@@ -272,18 +272,104 @@ const CATEGORY_LABELS: Record<string, string> = {
   business: "Business Inquiry",
 };
 
-export default function ChatPage() {
+interface ChatPageProps {
+  newMatchContact?: { name: string; avatar: string } | null;
+  onNewMatchHandled?: () => void;
+}
+
+export default function ChatPage({
+  newMatchContact,
+  onNewMatchHandled,
+}: ChatPageProps) {
+  const [chats, setChats] = useState<ChatItem[]>(BASE_CHATS);
   const [activeChat, setActiveChat] = useState<ChatItem | null>(null);
   const [inputVal, setInputVal] = useState("");
+  const onNewMatchHandledRef = useRef(onNewMatchHandled);
+  onNewMatchHandledRef.current = onNewMatchHandled;
 
-  const regularChats = CHATS.filter((c) => c.category !== "sangi");
-  const sangiChats = CHATS.filter((c) => c.category === "sangi");
+  const openMatchChat = useCallback(
+    (contact: { name: string; avatar: string }) => {
+      setChats((prev) => {
+        const existing = prev.find(
+          (c) => c.category === "sangi" && c.name.startsWith(contact.name),
+        );
+        if (existing) {
+          setActiveChat(existing);
+          return prev;
+        }
+        const newChat: ChatItem = {
+          id: Date.now(),
+          name: `${contact.name} 💞`,
+          avatar: contact.avatar,
+          lastMessage: "You just matched! Say hello 👋",
+          time: "Just now",
+          unread: 0,
+          category: "sangi",
+          messages: [
+            {
+              id: 1,
+              from: "them",
+              text: "Hi there! We matched on Tribal Sangi 💞",
+            },
+            {
+              id: 2,
+              from: "them",
+              text: "Looking forward to getting to know you! 🌿",
+            },
+          ],
+        };
+        setActiveChat(newChat);
+        return [newChat, ...prev];
+      });
+      onNewMatchHandledRef.current?.();
+    },
+    [],
+  );
+
+  useEffect(() => {
+    if (newMatchContact) {
+      openMatchChat(newMatchContact);
+    }
+  }, [newMatchContact, openMatchChat]);
+
+  const regularChats = chats.filter((c) => c.category !== "sangi");
+  const sangiChats = chats.filter((c) => c.category === "sangi");
 
   const grouped: Record<string, ChatItem[]> = {};
   for (const chat of regularChats) {
     if (!grouped[chat.category]) grouped[chat.category] = [];
     grouped[chat.category].push(chat);
   }
+
+  const handleSend = () => {
+    if (!inputVal.trim() || !activeChat) return;
+    const newMsg: ChatMessage = {
+      id: Date.now(),
+      from: "me",
+      text: inputVal.trim(),
+    };
+    setActiveChat((prev) =>
+      prev
+        ? {
+            ...prev,
+            messages: [...prev.messages, newMsg],
+            lastMessage: inputVal.trim(),
+          }
+        : prev,
+    );
+    setChats((prev) =>
+      prev.map((c) =>
+        c.id === activeChat.id
+          ? {
+              ...c,
+              messages: [...c.messages, newMsg],
+              lastMessage: inputVal.trim(),
+            }
+          : c,
+      ),
+    );
+    setInputVal("");
+  };
 
   return (
     <div className="flex flex-col h-full">
@@ -347,11 +433,15 @@ export default function ChatPage() {
                 placeholder="Type a message..."
                 value={inputVal}
                 onChange={(e) => setInputVal(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleSend();
+                }}
                 className="flex-1 rounded-full text-sm"
                 data-ocid="chat.input"
               />
               <button
                 type="button"
+                onClick={handleSend}
                 className="w-9 h-9 rounded-full flex items-center justify-center text-white"
                 style={{ background: "oklch(0.52 0.135 38)" }}
                 data-ocid="chat.submit_button"
@@ -372,14 +462,14 @@ export default function ChatPage() {
             <div className="px-4 pt-4 pb-2">
               <h2 className="text-lg font-bold text-foreground">Messages</h2>
             </div>
-            {Object.entries(grouped).map(([category, chats]) => (
+            {Object.entries(grouped).map(([category, items]) => (
               <div key={category}>
                 <div className="px-4 py-1.5 bg-muted/60">
                   <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                     {CATEGORY_LABELS[category]}
                   </span>
                 </div>
-                {chats.map((chat) => (
+                {items.map((chat) => (
                   <button
                     key={chat.id}
                     type="button"

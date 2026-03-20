@@ -6,28 +6,44 @@ import ChatPage from "./components/ChatPage";
 import CulturalFeedSection from "./components/CulturalFeedSection";
 import EdTechSection from "./components/EdTechSection";
 import FestivalAdBanners from "./components/FestivalAdBanners";
+import FloatingShopButton from "./components/FloatingShopButton";
 import Header from "./components/Header";
 import JobFeedSection from "./components/JobFeedSection";
 import LatestFeed from "./components/LatestFeed";
+import MerchandiseShopPage from "./components/MerchandiseShopPage";
+import PostFormModal from "./components/PostFormModal";
 import ProfileDrawer from "./components/ProfileDrawer";
+import ProfileEditModal from "./components/ProfileEditModal";
 import SangiDatingPage from "./components/SangiDatingPage";
 import SearchPage from "./components/SearchPage";
 import TribalSangiSection from "./components/TribalSangiSection";
 import TribalTalesSection from "./components/TribalTalesSection";
 import TribalpreneurSection from "./components/TribalpreneurSection";
 
-const MOCK_USER = {
-  name: "Saurav",
-  avatar: "https://picsum.photos/seed/saurav/100/100",
-};
+type AddFormType = "latest-feed" | "cultural-content" | "jobs" | "business";
 
 export default function App() {
   const [activeTab, setActiveTab] = useState("home");
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [activeForm, setActiveForm] = useState<AddFormType | null>(null);
+  const [profileEditOpen, setProfileEditOpen] = useState(false);
+  const [mockUser, setMockUser] = useState({
+    name: "Saurav",
+    avatar: "https://picsum.photos/seed/saurav/100/100",
+  });
+  const [newMatchContact, setNewMatchContact] = useState<{
+    name: string;
+    avatar: string;
+  } | null>(null);
 
   const handleCategoryClick = (id: string) => {
     const el = document.getElementById(`section-${id}`);
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const handleStartChat = (name: string, avatar: string) => {
+    setNewMatchContact({ name, avatar });
+    setActiveTab("chat");
   };
 
   return (
@@ -40,14 +56,17 @@ export default function App() {
         {/* Header always visible */}
         <Header
           onProfileClick={() => setDrawerOpen(true)}
-          userName={MOCK_USER.name}
-          userAvatar={MOCK_USER.avatar}
+          userName={mockUser.name}
+          userAvatar={mockUser.avatar}
         />
 
         {/* Page content */}
         {activeTab === "chat" ? (
           <div className="flex-1 flex flex-col overflow-hidden pb-24">
-            <ChatPage />
+            <ChatPage
+              newMatchContact={newMatchContact}
+              onNewMatchHandled={() => setNewMatchContact(null)}
+            />
           </div>
         ) : activeTab === "search" ? (
           <div className="flex-1 overflow-y-auto pb-24">
@@ -55,7 +74,11 @@ export default function App() {
           </div>
         ) : activeTab === "sangi" ? (
           <div className="flex-1 flex flex-col overflow-hidden pb-24">
-            <SangiDatingPage />
+            <SangiDatingPage onStartChat={handleStartChat} />
+          </div>
+        ) : activeTab === "shop" ? (
+          <div className="flex-1 flex flex-col overflow-hidden pb-16">
+            <MerchandiseShopPage onBack={() => setActiveTab("home")} />
           </div>
         ) : (
           <main className="flex-1 overflow-y-auto pb-24">
@@ -63,7 +86,10 @@ export default function App() {
             <CategoryGrid onCategoryClick={handleCategoryClick} />
 
             {/* Divider */}
-            <div className="mx-4 h-px bg-border mb-5" />
+            <div className="mx-4 h-px bg-border mb-4" />
+
+            {/* Ad Banners — before latest feed */}
+            <FestivalAdBanners />
 
             {/* Feed sections */}
             <motion.div
@@ -80,10 +106,6 @@ export default function App() {
               <div id="section-tribalpreneurs">
                 <TribalpreneurSection />
               </div>
-
-              {/* Festival Advertisement Banners */}
-              <FestivalAdBanners />
-
               <div id="section-cultural">
                 <CulturalFeedSection />
               </div>
@@ -115,15 +137,46 @@ export default function App() {
           </main>
         )}
 
+        {/* Floating Shop Button - visible on home tab only */}
+        <FloatingShopButton
+          visible={activeTab === "home"}
+          onOpen={() => setActiveTab("shop")}
+        />
+
         {/* Bottom navigation */}
-        <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
+        <BottomNav
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          onAddOption={(type) => setActiveForm(type)}
+        />
 
         {/* Profile drawer */}
         <ProfileDrawer
           isOpen={drawerOpen}
           onClose={() => setDrawerOpen(false)}
-          userName={MOCK_USER.name}
-          userAvatar={MOCK_USER.avatar}
+          userName={mockUser.name}
+          userAvatar={mockUser.avatar}
+          onEditProfile={() => setProfileEditOpen(true)}
+        />
+
+        {/* Post form modal */}
+        <PostFormModal
+          formType={activeForm}
+          onClose={() => setActiveForm(null)}
+        />
+
+        {/* Profile edit modal */}
+        <ProfileEditModal
+          isOpen={profileEditOpen}
+          onClose={() => setProfileEditOpen(false)}
+          userName={mockUser.name}
+          userAvatar={mockUser.avatar}
+          onSave={(data) => {
+            setMockUser({
+              name: data.name,
+              avatar: data.avatarUrl || mockUser.avatar,
+            });
+          }}
         />
       </div>
     </div>

@@ -1,5 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Play } from "lucide-react";
+import { BookOpen, Play } from "lucide-react";
 import { motion } from "motion/react";
 import FeedSection from "./FeedSection";
 
@@ -36,7 +36,7 @@ const mockTales = [
 
 export default function TribalTalesSection() {
   return (
-    <FeedSection title="Tribal Tales">
+    <FeedSection title="Tribal Tales" icon={BookOpen}>
       <div className="flex gap-3 overflow-x-auto px-4 pb-2 scrollbar-hide">
         {mockTales.map((tale, idx) => (
           <motion.div

@@ -1,5 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ChevronLeft, ChevronRight, Image, Play } from "lucide-react";
+import { ChevronLeft, ChevronRight, Image, Play, Zap } from "lucide-react";
 import { motion } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import FeedSection from "./FeedSection";
@@ -95,7 +95,6 @@ export default function LatestFeed() {
     activeIdxRef.current = idx;
   };
 
-  // Auto-slide effect
   useEffect(() => {
     if (isPaused) return;
     const timer = setInterval(() => {
@@ -106,8 +105,7 @@ export default function LatestFeed() {
   }, [isPaused, scrollToIdx]);
 
   return (
-    <FeedSection title="Latest Feed">
-      {/* Scroll container */}
+    <FeedSection title="Latest Feed" icon={Zap}>
       <div
         className="relative"
         onMouseEnter={() => setIsPaused(true)}
@@ -115,7 +113,6 @@ export default function LatestFeed() {
         onTouchStart={() => setIsPaused(true)}
         onTouchEnd={() => setIsPaused(false)}
       >
-        {/* Left arrow */}
         <button
           type="button"
           data-ocid="latest.pagination_prev"
@@ -130,7 +127,6 @@ export default function LatestFeed() {
           <ChevronLeft size={20} />
         </button>
 
-        {/* Cards track */}
         <div
           ref={scrollRef}
           onScroll={handleScroll}
@@ -158,7 +154,6 @@ export default function LatestFeed() {
                 scrollSnapAlign: "start",
               }}
             >
-              {/* Card */}
               <div
                 className="rounded-2xl overflow-hidden relative"
                 style={{
@@ -168,7 +163,6 @@ export default function LatestFeed() {
                   background: "oklch(var(--card))",
                 }}
               >
-                {/* Corner ribbon */}
                 <div
                   className="absolute top-0 right-0 z-20 overflow-hidden"
                   style={{ width: "64px", height: "64px" }}
@@ -196,7 +190,6 @@ export default function LatestFeed() {
                   </div>
                 </div>
 
-                {/* Thumbnail */}
                 <div className="relative">
                   <img
                     src={item.thumb}
@@ -258,7 +251,6 @@ export default function LatestFeed() {
                   }}
                 />
 
-                {/* User row */}
                 <div className="flex items-center gap-2.5 px-3.5 py-3">
                   <Avatar className="w-9 h-9 flex-shrink-0">
                     <AvatarImage src={item.userAvatar} alt={item.user} />
@@ -289,7 +281,6 @@ export default function LatestFeed() {
           ))}
         </div>
 
-        {/* Right arrow */}
         <button
           type="button"
           data-ocid="latest.pagination_next"
@@ -305,7 +296,6 @@ export default function LatestFeed() {
         </button>
       </div>
 
-      {/* Dot indicators with progress animation */}
       <div className="flex justify-center gap-2 mt-2 pb-1">
         {mockLatest.map((item, i) => (
           <button

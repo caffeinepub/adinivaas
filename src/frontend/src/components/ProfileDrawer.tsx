@@ -18,6 +18,7 @@ interface ProfileDrawerProps {
   userName: string;
   userAvatar?: string;
   onLogout?: () => void;
+  onEditProfile?: () => void;
 }
 
 const menuItems = [
@@ -35,7 +36,15 @@ export default function ProfileDrawer({
   userName,
   userAvatar,
   onLogout,
+  onEditProfile,
 }: ProfileDrawerProps) {
+  const handleMenuClick = (id: string) => {
+    if (id === "profile") {
+      onEditProfile?.();
+      onClose();
+    }
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -137,6 +146,7 @@ export default function ProfileDrawer({
                     <li key={item.id}>
                       <button
                         type="button"
+                        onClick={() => handleMenuClick(item.id)}
                         className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-sm text-foreground hover:bg-accent/60 active:bg-accent transition-colors text-left"
                         data-ocid={`profile_drawer.${item.id}.button`}
                       >
@@ -150,6 +160,17 @@ export default function ProfileDrawer({
                           />
                         </div>
                         {item.label}
+                        {item.id === "profile" && (
+                          <span
+                            className="ml-auto text-xs"
+                            style={{
+                              color: "oklch(0.52 0.135 38)",
+                              fontWeight: 600,
+                            }}
+                          >
+                            Edit
+                          </span>
+                        )}
                       </button>
                     </li>
                   );

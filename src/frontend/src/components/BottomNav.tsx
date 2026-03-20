@@ -11,10 +11,14 @@ import {
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
+import { createPortal } from "react-dom";
+
+type AddOptionType = "latest-feed" | "cultural-content" | "jobs" | "business";
 
 interface BottomNavProps {
   activeTab: string;
   onTabChange: (tab: string) => void;
+  onAddOption?: (type: AddOptionType) => void;
 }
 
 const tabs = [
@@ -47,75 +51,149 @@ const addOptions = [
   },
 ];
 
-export default function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
+export default function BottomNav({
+  activeTab,
+  onTabChange,
+  onAddOption,
+}: BottomNavProps) {
   const [showAddMenu, setShowAddMenu] = useState(false);
+
+  const portal = createPortal(
+    <AnimatePresence>
+      {showAddMenu && (
+        <motion.div
+          key="add-menu"
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 40 }}
+          transition={{ type: "spring", damping: 22, stiffness: 280 }}
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "#fff",
+            zIndex: 9999,
+            display: "flex",
+            flexDirection: "column",
+            overflowY: "auto",
+          }}
+        >
+          {/* Header */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              padding: "20px 20px 12px",
+              borderBottom: "1px solid oklch(0.93 0.02 60)",
+              flexShrink: 0,
+              background: "#fff",
+            }}
+          >
+            <div>
+              <p style={{ fontSize: 17, fontWeight: 700, margin: 0 }}>
+                Add to Feed
+              </p>
+              <p
+                style={{
+                  fontSize: 13,
+                  color: "oklch(0.55 0.02 50)",
+                  margin: 0,
+                  marginTop: 2,
+                }}
+              >
+                Choose what you want to share with the community
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowAddMenu(false)}
+              style={{
+                width: 36,
+                height: 36,
+                borderRadius: "50%",
+                border: "none",
+                background: "oklch(0.95 0.02 60)",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexShrink: 0,
+              }}
+            >
+              <X size={18} style={{ color: "oklch(0.45 0.05 50)" }} />
+            </button>
+          </div>
+
+          {/* Options grid */}
+          <div
+            style={{
+              flex: 1,
+              padding: "24px 20px",
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: 16,
+              alignContent: "start",
+            }}
+          >
+            {addOptions.map((opt) => {
+              const Icon = opt.icon;
+              return (
+                <button
+                  key={opt.id}
+                  type="button"
+                  data-ocid={`add.${opt.id}.button`}
+                  onClick={() => {
+                    setShowAddMenu(false);
+                    onAddOption?.(opt.id as AddOptionType);
+                  }}
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    gap: 10,
+                    borderRadius: 20,
+                    padding: "24px 12px",
+                    background: `${opt.color}18`,
+                    border: `1.5px solid ${opt.color}44`,
+                    cursor: "pointer",
+                  }}
+                >
+                  <div
+                    style={{
+                      width: 52,
+                      height: 52,
+                      borderRadius: "50%",
+                      background: opt.color,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Icon size={22} color="white" />
+                  </div>
+                  <span
+                    style={{
+                      fontSize: 13,
+                      color: opt.color,
+                      fontWeight: 600,
+                      textAlign: "center",
+                    }}
+                  >
+                    {opt.label}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>,
+    document.body,
+  );
 
   return (
     <>
-      {/* Backdrop */}
-      <AnimatePresence>
-        {showAddMenu && (
-          <motion.div
-            key="backdrop"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/40 z-40"
-            onClick={() => setShowAddMenu(false)}
-          />
-        )}
-      </AnimatePresence>
-
-      {/* Add Menu */}
-      <AnimatePresence>
-        {showAddMenu && (
-          <motion.div
-            key="add-menu"
-            initial={{ opacity: 0, y: 40, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 40, scale: 0.95 }}
-            transition={{ type: "spring", damping: 22, stiffness: 300 }}
-            className="fixed bottom-24 left-1/2 -translate-x-1/2 w-[320px] bg-card rounded-2xl z-50 p-4"
-            style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.18)" }}
-          >
-            <p className="text-xs font-700 text-muted-foreground uppercase tracking-wider mb-3">
-              Add to feed
-            </p>
-            <div className="grid grid-cols-2 gap-2">
-              {addOptions.map((opt) => {
-                const Icon = opt.icon;
-                return (
-                  <button
-                    key={opt.id}
-                    type="button"
-                    data-ocid={`add.${opt.id}.button`}
-                    onClick={() => setShowAddMenu(false)}
-                    className="flex items-center gap-2 rounded-xl px-3 py-3 hover:opacity-80 transition-opacity text-left"
-                    style={{
-                      background: `${opt.color}22`,
-                      border: `1.5px solid ${opt.color}44`,
-                    }}
-                  >
-                    <div
-                      className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
-                      style={{ background: opt.color }}
-                    >
-                      <Icon size={14} color="white" />
-                    </div>
-                    <span
-                      className="text-xs font-600"
-                      style={{ color: opt.color, fontWeight: 600 }}
-                    >
-                      {opt.label}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
+      {portal}
       <nav
         className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[390px] bg-card border-t border-border flex items-center justify-around px-3 py-2 z-40"
         style={{ boxShadow: "0 -4px 16px rgba(0,0,0,0.08)" }}
@@ -131,9 +209,9 @@ export default function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
                 className="relative -top-4 w-14 h-14 rounded-full flex items-center justify-center shadow-lg transition-transform active:scale-95"
                 style={{
                   background: showAddMenu
-                    ? "oklch(0.38 0.10 40)"
-                    : "oklch(0.52 0.135 38)",
-                  boxShadow: "0 4px 16px rgba(163,74,46,0.4)",
+                    ? "oklch(0.52 0.18 145)"
+                    : "oklch(0.65 0.18 145)",
+                  boxShadow: "0 4px 16px rgba(60,160,80,0.4)",
                   transition: "background 0.2s",
                 }}
                 aria-label="Add content"

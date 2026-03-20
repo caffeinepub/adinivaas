@@ -88,19 +88,26 @@ export default function LikesPopover({ isOpen, onClose }: LikesPopoverProps) {
     <AnimatePresence>
       {isOpen && (
         <>
-          <div
-            className="fixed inset-0 z-40"
-            onClick={onClose}
-            onKeyDown={onClose}
-          />
+          {/* Backdrop */}
           <motion.div
-            initial={{ opacity: 0, y: -10, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -10, scale: 0.96 }}
-            transition={{ duration: 0.18 }}
-            className="absolute top-14 left-2 z-50 w-80 bg-card rounded-2xl shadow-2xl border border-border overflow-hidden"
+            key="likes-backdrop"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 z-[60]"
+            onClick={onClose}
+          />
+          {/* Top-centre levitating card */}
+          <motion.div
+            key="likes-card"
+            initial={{ opacity: 0, scale: 0.88, y: -20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.88, y: -20 }}
+            transition={{ type: "spring", damping: 22, stiffness: 300 }}
+            className="fixed left-1/2 top-16 -translate-x-1/2 w-[340px] bg-card rounded-3xl z-[70] overflow-hidden"
+            style={{ boxShadow: "0 24px 64px rgba(0,0,0,0.22)" }}
           >
-            <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-border">
               <div className="flex items-center gap-2">
                 <Heart
                   size={16}
@@ -109,22 +116,22 @@ export default function LikesPopover({ isOpen, onClose }: LikesPopoverProps) {
                     fill: "oklch(0.52 0.135 38)",
                   }}
                 />
-                <span className="font-semibold text-sm text-foreground">
+                <span className="font-bold text-sm text-foreground">
                   Likes on Your Posts
                 </span>
               </div>
               <button
                 type="button"
                 onClick={onClose}
-                className="p-1 rounded-full hover:bg-accent transition-colors"
+                className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-accent transition-colors"
               >
                 <X size={14} className="text-muted-foreground" />
               </button>
             </div>
-            <ScrollArea className="max-h-80">
+            <ScrollArea className="max-h-[60vh]">
               {LIKES_DATA.map((group) => (
                 <div key={group.section}>
-                  <div className="px-4 py-2 bg-muted/50">
+                  <div className="px-5 py-2 bg-muted/50">
                     <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                       {group.section}
                     </span>
@@ -132,7 +139,7 @@ export default function LikesPopover({ isOpen, onClose }: LikesPopoverProps) {
                   {group.items.map((item) => (
                     <div
                       key={item.id}
-                      className="flex items-center gap-3 px-4 py-2.5 hover:bg-accent/40 transition-colors"
+                      className="flex items-center gap-3 px-5 py-2.5 hover:bg-accent/40 transition-colors"
                     >
                       <Avatar className="w-9 h-9 flex-shrink-0">
                         <AvatarImage src={item.avatar} alt={item.name} />
