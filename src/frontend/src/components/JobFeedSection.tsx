@@ -12,12 +12,14 @@ import {
   Car,
   CheckCircle2,
   ChefHat,
+  ChevronDown,
   ChevronRight,
+  ChevronUp,
   Clock,
-  DollarSign,
   Flag,
   Hammer,
   Heart,
+  IndianRupee,
   MapPin,
   Palette,
   Plus,
@@ -299,6 +301,10 @@ const GOVT_JOBS = [
   },
 ];
 
+const NEARBY_DEFAULT = 2;
+const MAIN_LIST_DEFAULT = 3;
+const FEATURED_DEFAULT = 2;
+
 // ─── Tag color helper ─────────────────────────────────────────────────────────
 function tagStyle(tag: string): string {
   if (tag === "Urgent") return "bg-red-100 text-red-700";
@@ -391,7 +397,7 @@ function JobDetailOverlay({
                   <MapPin size={12} /> {job.location}
                 </span>
                 <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                  <DollarSign size={12} /> {job.salary}
+                  <IndianRupee size={12} /> {job.salary}
                 </span>
                 <span
                   className="px-2 py-0.5 rounded-full text-xs font-semibold text-white"
@@ -790,7 +796,112 @@ function PostJobOverlay({
 }
 
 // ─── Job Card ─────────────────────────────────────────────────────────────────
-function JobCard({
+function CompactJobCard({
+  job,
+  index,
+  saved,
+  onSave,
+  onOpen,
+}: {
+  job: Job;
+  index: number;
+  saved: boolean;
+  onSave: (id: number) => void;
+  onOpen: (job: Job) => void;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay: index * 0.05 }}
+      className="flex-shrink-0 w-44 bg-card rounded-xl p-3 cursor-pointer relative flex flex-col"
+      style={{
+        boxShadow: "0 2px 10px rgba(0,0,0,0.07)",
+        border: "1px solid oklch(0.89 0.032 68)",
+        minHeight: "160px",
+      }}
+      onClick={() => onOpen(job)}
+      data-ocid={`jobs.item.${index + 1}`}
+    >
+      {/* Save icon */}
+      <button
+        type="button"
+        className="absolute top-2 right-2"
+        onClick={(e) => {
+          e.stopPropagation();
+          onSave(job.id);
+        }}
+        data-ocid={`jobs.toggle.${index + 1}`}
+      >
+        <Heart
+          size={13}
+          className={
+            saved ? "fill-red-500 text-red-500" : "text-muted-foreground"
+          }
+        />
+      </button>
+
+      {/* Logo + title */}
+      <div className="flex items-start gap-2 mb-2 pr-4">
+        <div
+          className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-xs flex-shrink-0"
+          style={{ background: "oklch(0.52 0.135 38)" }}
+        >
+          {job.company.charAt(0)}
+        </div>
+        <div className="min-w-0">
+          <p className="text-xs font-bold leading-tight line-clamp-2 text-foreground">
+            {job.title}
+          </p>
+          <p className="text-[10px] text-muted-foreground truncate mt-0.5">
+            {job.company}
+          </p>
+        </div>
+      </div>
+
+      {/* Location + salary */}
+      <div className="flex flex-col gap-0.5 mb-2">
+        <span className="flex items-center gap-0.5 text-[10px] text-muted-foreground">
+          <MapPin size={9} className="flex-shrink-0" />
+          <span className="truncate">{job.location}</span>
+        </span>
+        {job.salary && (
+          <span className="flex items-center gap-0.5 text-[10px] text-muted-foreground">
+            <IndianRupee size={9} className="flex-shrink-0" />
+            <span className="truncate">{job.salary}</span>
+          </span>
+        )}
+      </div>
+
+      {/* Job type badge */}
+      <span
+        className="text-[9px] font-semibold px-2 py-0.5 rounded-full self-start mb-2"
+        style={{
+          background: "oklch(0.92 0.08 145)",
+          color: "oklch(0.35 0.12 145)",
+        }}
+      >
+        {job.jobType}
+      </span>
+
+      {/* Apply button */}
+      <button
+        type="button"
+        className="mt-auto w-full py-1.5 rounded-lg text-[10px] font-bold text-white"
+        style={{ background: "oklch(0.52 0.135 38)" }}
+        onClick={(e) => {
+          e.stopPropagation();
+          onOpen(job);
+        }}
+        data-ocid={`jobs.primary_button.${index + 1}`}
+      >
+        Apply Now
+      </button>
+    </motion.div>
+  );
+}
+
+function _JobCard({
   job,
   index,
   saved,
@@ -858,7 +969,7 @@ function JobCard({
           <MapPin size={11} /> {job.location}
         </span>
         <span className="flex items-center gap-1 text-xs text-muted-foreground">
-          <DollarSign size={11} /> {job.salary}
+          <IndianRupee size={11} /> {job.salary}
         </span>
         <span
           className="px-2 py-0.5 rounded-full text-xs font-semibold text-white"
@@ -930,6 +1041,9 @@ export default function JobFeedSection() {
   const [postJobOpen, setPostJobOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [featuredExpanded, setFeaturedExpanded] = useState(false);
+  const [nearbyExpanded, setNearbyExpanded] = useState(false);
+  const [mainListExpanded, setMainListExpanded] = useState(false);
 
   function toggleSave(id: number) {
     setSavedJobs((prev) =>
@@ -948,6 +1062,17 @@ export default function JobFeedSection() {
   });
 
   const featuredJobs = JOBS.filter((j) => j.featured);
+  const nearbyJobs = JOBS.slice(0, 5);
+
+  const visibleFeatured = featuredExpanded
+    ? featuredJobs
+    : featuredJobs.slice(0, FEATURED_DEFAULT);
+  const extraFeatured = featuredJobs.slice(FEATURED_DEFAULT);
+
+  const visibleNearby = nearbyExpanded
+    ? nearbyJobs
+    : nearbyJobs.slice(0, NEARBY_DEFAULT);
+  const extraNearby = nearbyJobs.slice(NEARBY_DEFAULT);
 
   return (
     <FeedSection title="Jobs" icon={Briefcase}>
@@ -1034,17 +1159,29 @@ export default function JobFeedSection() {
               <span className="font-bold text-foreground text-sm flex items-center gap-1.5">
                 <Award size={15} className="text-yellow-600" /> Featured Jobs
               </span>
-              <button
-                type="button"
-                className="flex items-center gap-0.5 text-xs font-semibold"
-                style={{ color: "oklch(0.52 0.135 38)" }}
-                data-ocid="jobs.secondary_button"
-              >
-                View All <ChevronRight size={13} />
-              </button>
+              {featuredJobs.length > FEATURED_DEFAULT && (
+                <button
+                  type="button"
+                  className="flex items-center gap-0.5 text-xs font-semibold"
+                  style={{ color: "oklch(0.52 0.135 38)" }}
+                  onClick={() => setFeaturedExpanded((v) => !v)}
+                  data-ocid="jobs.featured.toggle"
+                >
+                  {featuredExpanded ? (
+                    <>
+                      Show Less <ChevronUp size={13} />
+                    </>
+                  ) : (
+                    <>
+                      See All ({featuredJobs.length}) <ChevronDown size={13} />
+                    </>
+                  )}
+                </button>
+              )}
             </div>
+            {/* Always-visible first 2 */}
             <div className="flex gap-3 px-4 overflow-x-auto scrollbar-hide pb-2">
-              {featuredJobs.map((job) => (
+              {visibleFeatured.slice(0, FEATURED_DEFAULT).map((job) => (
                 <motion.div
                   key={job.id}
                   whileTap={{ scale: 0.97 }}
@@ -1084,14 +1221,100 @@ export default function JobFeedSection() {
                 </motion.div>
               ))}
             </div>
+            {/* Expanded extra cards */}
+            <AnimatePresence>
+              {featuredExpanded && extraFeatured.length > 0 && (
+                <motion.div
+                  key="featured-extra"
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                  style={{ overflow: "hidden" }}
+                >
+                  <div className="flex gap-3 px-4 overflow-x-auto scrollbar-hide pb-2 pt-1">
+                    {extraFeatured.map((job) => (
+                      <motion.div
+                        key={job.id}
+                        whileTap={{ scale: 0.97 }}
+                        onClick={() => setSelectedJob(job)}
+                        className="flex-shrink-0 w-56 rounded-2xl overflow-hidden cursor-pointer"
+                        style={{
+                          background: `linear-gradient(135deg, ${job.companyColor}dd, ${job.companyColor}88)`,
+                          boxShadow: "0 6px 20px rgba(0,0,0,0.15)",
+                        }}
+                        data-ocid={`jobs.card.${job.id}`}
+                      >
+                        <div className="p-4">
+                          <Badge className="bg-white/20 text-white border-0 text-xs mb-3">
+                            {job.tags.includes("Urgent")
+                              ? "🔥 Urgent"
+                              : "⭐ Featured"}
+                          </Badge>
+                          <p className="font-bold text-white text-sm leading-tight">
+                            {job.title}
+                          </p>
+                          <p className="text-white/80 text-xs mt-1">
+                            {job.company}
+                          </p>
+                          <div className="flex items-center gap-1 mt-2">
+                            <MapPin size={11} className="text-white/70" />
+                            <span className="text-white/70 text-xs">
+                              {job.location}
+                            </span>
+                          </div>
+                          <div className="mt-3 flex items-center justify-between">
+                            <span className="text-white font-bold text-xs">
+                              {job.salary}
+                            </span>
+                            <span className="text-white/70 text-xs">
+                              {job.jobType}
+                            </span>
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         )}
 
         {/* Main Job List */}
-        <div className="px-4 mt-4 space-y-3">
+        <div className="mt-4">
+          <div className="flex items-center justify-between mb-3 px-4">
+            <h3 className="font-bold text-foreground text-sm flex items-center gap-2">
+              <Briefcase size={15} style={{ color: "oklch(0.52 0.135 38)" }} />
+              All Jobs
+            </h3>
+            {filteredJobs.length > MAIN_LIST_DEFAULT && (
+              <button
+                type="button"
+                onClick={() => setMainListExpanded((v) => !v)}
+                className="flex items-center gap-1 text-xs font-semibold px-3 py-1 rounded-full"
+                style={{
+                  color: "oklch(0.52 0.135 38)",
+                  background: "oklch(0.95 0.032 68)",
+                }}
+                data-ocid="jobs.main_list.toggle"
+              >
+                {mainListExpanded ? (
+                  <>
+                    Show Less <ChevronUp size={13} />
+                  </>
+                ) : (
+                  <>
+                    See All ({filteredJobs.length - MAIN_LIST_DEFAULT}){" "}
+                    <ChevronDown size={13} />
+                  </>
+                )}
+              </button>
+            )}
+          </div>
           {filteredJobs.length === 0 ? (
             <div
-              className="flex flex-col items-center justify-center py-10 text-muted-foreground"
+              className="flex flex-col items-center justify-center py-10 text-muted-foreground px-4"
               data-ocid="jobs.empty_state"
             >
               <Briefcase size={36} className="mb-3 opacity-40" />
@@ -1101,16 +1324,21 @@ export default function JobFeedSection() {
               </p>
             </div>
           ) : (
-            filteredJobs.map((job, idx) => (
-              <JobCard
-                key={job.id}
-                job={job}
-                index={idx}
-                saved={savedJobs.includes(job.id)}
-                onSave={toggleSave}
-                onOpen={setSelectedJob}
-              />
-            ))
+            <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-3 px-4">
+              {(mainListExpanded
+                ? filteredJobs
+                : filteredJobs.slice(0, MAIN_LIST_DEFAULT)
+              ).map((job, idx) => (
+                <CompactJobCard
+                  key={job.id}
+                  job={job}
+                  index={idx}
+                  saved={savedJobs.includes(job.id)}
+                  onSave={toggleSave}
+                  onOpen={setSelectedJob}
+                />
+              ))}
+            </div>
           )}
         </div>
 
@@ -1209,8 +1437,9 @@ export default function JobFeedSection() {
               <MapPin size={15} style={{ color: "oklch(0.52 0.135 38)" }} />
               <h3 className="font-bold text-foreground text-sm">Nearby Jobs</h3>
             </div>
+            {/* Always-visible first 2 */}
             <div className="space-y-3">
-              {JOBS.slice(0, 3).map((job, i) => (
+              {visibleNearby.slice(0, NEARBY_DEFAULT).map((job, i) => (
                 <button
                   type="button"
                   key={`nearby-${job.id}`}
@@ -1243,6 +1472,77 @@ export default function JobFeedSection() {
                 </button>
               ))}
             </div>
+            {/* Expanded extra nearby */}
+            <AnimatePresence>
+              {nearbyExpanded && extraNearby.length > 0 && (
+                <motion.div
+                  key="nearby-extra"
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                  style={{ overflow: "hidden" }}
+                >
+                  <div className="space-y-3 pt-3">
+                    {extraNearby.map((job, i) => (
+                      <button
+                        type="button"
+                        key={`nearby-extra-${job.id}`}
+                        className="flex items-center gap-3 bg-card rounded-xl p-3 cursor-pointer w-full text-left"
+                        style={{
+                          boxShadow: "0 2px 10px rgba(0,0,0,0.06)",
+                          border: "1px solid oklch(0.89 0.032 68)",
+                        }}
+                        onClick={() => setSelectedJob(job)}
+                        data-ocid={`jobs.nearby.item.${NEARBY_DEFAULT + i + 1}`}
+                      >
+                        <div
+                          className="w-9 h-9 rounded-xl flex items-center justify-center text-white font-bold text-xs flex-shrink-0"
+                          style={{ background: job.companyColor }}
+                        >
+                          {job.companyInitials}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-semibold text-foreground text-xs truncate">
+                            {job.title}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {job.location} · {job.salary}
+                          </p>
+                        </div>
+                        <ChevronRight
+                          size={14}
+                          className="text-muted-foreground flex-shrink-0"
+                        />
+                      </button>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+            {/* See All / Show Less toggle */}
+            {extraNearby.length > 0 && (
+              <button
+                type="button"
+                onClick={() => setNearbyExpanded((v) => !v)}
+                className="mt-3 w-full flex items-center justify-center gap-1 py-2 rounded-xl text-xs font-semibold"
+                style={{
+                  color: "oklch(0.52 0.135 38)",
+                  border: "1px dashed oklch(0.70 0.08 38)",
+                }}
+                data-ocid="jobs.nearby.toggle"
+              >
+                {nearbyExpanded ? (
+                  <>
+                    Show Less <ChevronUp size={13} />
+                  </>
+                ) : (
+                  <>
+                    See All ({nearbyJobs.length}) <ChevronDown size={13} />
+                  </>
+                )}
+              </button>
+            )}
           </div>
         )}
 

@@ -15,12 +15,14 @@ const LANGUAGES = [
 
 interface HeaderProps {
   onProfileClick: () => void;
+  onHomeClick?: () => void;
   userName: string;
   userAvatar?: string;
 }
 
 export default function Header({
   onProfileClick,
+  onHomeClick,
   userName,
   userAvatar,
 }: HeaderProps) {
@@ -56,16 +58,23 @@ export default function Header({
       style={{ boxShadow: "0 2px 8px rgba(163,74,46,0.07)" }}
     >
       <div className="flex items-center gap-2">
-        <span
-          className="text-2xl font-bold tracking-tight"
+        {/* ADINIVAAS — tapping scrolls to top / switches to home */}
+        <button
+          type="button"
+          onClick={onHomeClick}
+          className="text-2xl font-bold tracking-tight transition-opacity active:opacity-70"
           style={{
             color: "oklch(0.42 0.12 40)",
             fontWeight: 800,
             letterSpacing: "0.5px",
+            background: "none",
+            border: "none",
+            padding: 0,
+            cursor: "pointer",
           }}
         >
           ADINIVAAS
-        </span>
+        </button>
 
         {/* Language Selector */}
         <div ref={langRef} className="relative">

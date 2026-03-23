@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import BottomNav from "./components/BottomNav";
 import CategoryGrid from "./components/CategoryGrid";
 import ChatPage from "./components/ChatPage";
@@ -35,6 +35,7 @@ export default function App() {
     name: string;
     avatar: string;
   } | null>(null);
+  const mainScrollRef = useRef<HTMLElement>(null);
 
   const handleCategoryClick = (id: string) => {
     const el = document.getElementById(`section-${id}`);
@@ -44,6 +45,17 @@ export default function App() {
   const handleStartChat = (name: string, avatar: string) => {
     setNewMatchContact({ name, avatar });
     setActiveTab("chat");
+  };
+
+  const handleHomeClick = () => {
+    // If on another tab, switch to home first
+    setActiveTab("home");
+    // Then scroll the main content area to the top
+    setTimeout(() => {
+      if (mainScrollRef.current) {
+        mainScrollRef.current.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    }, 50);
   };
 
   return (
@@ -56,6 +68,7 @@ export default function App() {
         {/* Header always visible */}
         <Header
           onProfileClick={() => setDrawerOpen(true)}
+          onHomeClick={handleHomeClick}
           userName={mockUser.name}
           userAvatar={mockUser.avatar}
         />
@@ -81,7 +94,7 @@ export default function App() {
             <MerchandiseShopPage onBack={() => setActiveTab("home")} />
           </div>
         ) : (
-          <main className="flex-1 overflow-y-auto pb-24">
+          <main ref={mainScrollRef} className="flex-1 overflow-y-auto pb-24">
             {/* Category Grid */}
             <CategoryGrid onCategoryClick={handleCategoryClick} />
 
@@ -109,13 +122,13 @@ export default function App() {
               <div id="section-cultural">
                 <CulturalFeedSection />
               </div>
-              <EdTechSection />
               <div id="section-jobs">
                 <JobFeedSection />
               </div>
               <div id="section-tribal-sangi">
                 <TribalSangiSection />
               </div>
+              <EdTechSection />
             </motion.div>
 
             {/* Footer */}
