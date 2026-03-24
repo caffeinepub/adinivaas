@@ -4,6 +4,7 @@ import BottomNav from "./components/BottomNav";
 import CategoryGrid from "./components/CategoryGrid";
 import ChatPage from "./components/ChatPage";
 import CulturalFeedSection from "./components/CulturalFeedSection";
+import EBookSection from "./components/EBookSection";
 import EdTechSection from "./components/EdTechSection";
 import FestivalAdBanners from "./components/FestivalAdBanners";
 import FloatingShopButton from "./components/FloatingShopButton";
@@ -48,9 +49,7 @@ export default function App() {
   };
 
   const handleHomeClick = () => {
-    // If on another tab, switch to home first
     setActiveTab("home");
-    // Then scroll the main content area to the top
     setTimeout(() => {
       if (mainScrollRef.current) {
         mainScrollRef.current.scrollTo({ top: 0, behavior: "smooth" });
@@ -124,6 +123,9 @@ export default function App() {
               </div>
               <div id="section-jobs">
                 <JobFeedSection />
+              </div>
+              <div id="section-ebook">
+                <EBookSection />
               </div>
               <div id="section-tribal-sangi">
                 <TribalSangiSection />

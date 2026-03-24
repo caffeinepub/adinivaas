@@ -62,6 +62,17 @@ export default function TribalSangiSection() {
               <p className="text-xs text-muted-foreground">
                 Subscribe to unlock Tribal Sangi
               </p>
+              <p
+                className="text-xs mt-1.5 px-2 py-1 rounded-lg"
+                style={{
+                  color: "oklch(0.45 0.10 40)",
+                  background: "oklch(0.95 0.03 68)",
+                  fontWeight: 500,
+                  border: "1px solid oklch(0.85 0.05 68)",
+                }}
+              >
+                📋 Adhar Card / ST Certificate is mandatory for verification
+              </p>
             </div>
             <motion.button
               whileTap={{ scale: 0.96 }}

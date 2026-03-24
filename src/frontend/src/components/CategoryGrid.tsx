@@ -1,4 +1,5 @@
 import {
+  BookMarked,
   BookOpen,
   Briefcase,
   Feather,
@@ -16,6 +17,7 @@ const categories = [
   { id: "tribalpreneurs", label: "TRIBALPRENEURS", icon: Briefcase },
   { id: "jobs", label: "JOBS", icon: Users },
   { id: "cultural", label: "CULTURAL", icon: Feather },
+  { id: "ebook", label: "EBOOK", icon: BookMarked },
 ];
 
 interface CategoryGridProps {
