@@ -780,7 +780,9 @@ function BookDetailSheet({
         if (e.key === "Escape") onClose();
       }}
     >
-      <dialog
+      {/* biome-ignore lint/a11y/useSemanticElements: <dialog open> adds unwanted UA styles to our bottom-sheet */}
+      <div
+        role="dialog"
         aria-label={book.title}
         className="rounded-t-3xl p-5 pb-8 max-h-[85vh] overflow-y-auto w-full"
         style={{ background: "white" }}
@@ -886,7 +888,7 @@ function BookDetailSheet({
         >
           📖 Read Now
         </button>
-      </dialog>
+      </div>
     </div>,
     document.body,
   );
