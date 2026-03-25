@@ -181,11 +181,7 @@ export default function TribalSangiSection({
         <div className="flex justify-center mt-3">
           <button
             type="button"
-            onClick={() =>
-              document
-                .getElementById("section-tribal-sangi")
-                ?.scrollIntoView({ behavior: "smooth" })
-            }
+            onClick={onOpenSangi}
             className="px-5 py-2 rounded-full text-sm font-semibold border-2 transition-all"
             style={{
               borderColor: "oklch(0.55 0.16 145)",
