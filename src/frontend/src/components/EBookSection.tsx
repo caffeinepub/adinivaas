@@ -439,7 +439,7 @@ function fileToDataUrl(file: File): Promise<string> {
 }
 
 // ─────────────────────────────────────────────
-// In-App EBook Reader
+// In-App EBook Reader  — Tribal Manuscript Theme
 // ─────────────────────────────────────────────
 function EBookReader({ book, onClose }: { book: EBook; onClose: () => void }) {
   const [chapterIndex, setChapterIndex] = useState(0);
@@ -468,7 +468,13 @@ function EBookReader({ book, onClose }: { book: EBook; onClose: () => void }) {
           <p
             key={para.slice(0, 30)}
             className="font-bold mb-3"
-            style={{ color: "oklch(0.30 0.07 40)", fontSize }}
+            style={{
+              color: "#5C2E00",
+              fontSize,
+              fontFamily: "Georgia, 'Palatino Linotype', serif",
+              lineHeight: 1.9,
+              letterSpacing: "0.01em",
+            }}
           >
             {para.replace(/\*\*/g, "")}
           </p>
@@ -479,12 +485,24 @@ function EBookReader({ book, onClose }: { book: EBook; onClose: () => void }) {
       return (
         <p
           key={para.slice(0, 30)}
-          className="mb-4 leading-relaxed"
-          style={{ color: "oklch(0.22 0.05 40)", fontSize }}
+          className="mb-4"
+          style={{
+            color: "#2C1A0A",
+            fontSize,
+            fontFamily: "Georgia, 'Palatino Linotype', serif",
+            lineHeight: 1.9,
+            letterSpacing: "0.01em",
+          }}
         >
           {parts.map((part) =>
             part.startsWith("**") ? (
-              <strong key={part} style={{ color: "oklch(0.30 0.07 40)" }}>
+              <strong
+                key={part}
+                style={{
+                  color: "#5C2E00",
+                  fontFamily: "Georgia, serif",
+                }}
+              >
                 {part.replace(/\*\*/g, "")}
               </strong>
             ) : (
@@ -500,13 +518,11 @@ function EBookReader({ book, onClose }: { book: EBook; onClose: () => void }) {
     return createPortal(
       <div
         className="fixed inset-0 z-50 flex flex-col"
-        style={{ background: "#f5f0ea" }}
+        style={{ background: "#FDF6E3" }}
       >
         <div
           className="flex items-center gap-3 px-4 py-3"
-          style={{
-            background: "oklch(0.28 0.07 40)",
-          }}
+          style={{ background: "#1A3A2C" }}
         >
           <button
             type="button"
@@ -535,14 +551,14 @@ function EBookReader({ book, onClose }: { book: EBook; onClose: () => void }) {
   return createPortal(
     <div
       className="fixed inset-0 z-50 flex flex-col"
-      style={{ background: "oklch(0.97 0.01 55)" }}
+      style={{ background: "#FDF6E3" }}
     >
-      {/* Reader Header */}
+      {/* Reader Header — deep forest green */}
       <div
-        className="flex items-center gap-3 px-4 py-3 border-b"
+        className="flex items-center gap-3 px-4 py-3"
         style={{
-          background: "oklch(0.28 0.07 40)",
-          borderColor: "oklch(0.22 0.06 40)",
+          background: "#1A3A2C",
+          borderBottom: "2px solid #0F2318",
         }}
       >
         <button
@@ -554,8 +570,18 @@ function EBookReader({ book, onClose }: { book: EBook; onClose: () => void }) {
           <ArrowLeft size={20} />
         </button>
         <div className="flex-1 min-w-0">
-          <p className="text-white font-bold text-sm truncate">{book.title}</p>
-          <p className="text-white/70 text-xs">{book.author}</p>
+          <p
+            className="text-white font-bold text-sm truncate"
+            style={{ fontFamily: "Georgia, serif" }}
+          >
+            {book.title}
+          </p>
+          <p
+            className="text-white/60 text-xs"
+            style={{ fontFamily: "sans-serif" }}
+          >
+            {book.author}
+          </p>
         </div>
         <button
           type="button"
@@ -565,19 +591,19 @@ function EBookReader({ book, onClose }: { book: EBook; onClose: () => void }) {
         >
           <Bookmark
             size={18}
-            fill={bookmarked ? "#D2691E" : "none"}
-            stroke={bookmarked ? "#D2691E" : "white"}
+            fill={bookmarked ? "#E8A020" : "none"}
+            stroke={bookmarked ? "#E8A020" : "rgba(255,255,255,0.8)"}
           />
         </button>
       </div>
 
-      {/* Progress Bar */}
-      <div className="w-full h-1" style={{ background: "oklch(0.85 0.04 55)" }}>
+      {/* Progress Bar — amber saffron gradient */}
+      <div className="w-full h-1.5" style={{ background: "#EFE6D0" }}>
         <div
           className="h-full transition-all duration-500"
           style={{
             width: `${progress}%`,
-            background: "oklch(0.52 0.135 38)",
+            background: "linear-gradient(90deg, #C8860A, #E8A020)",
           }}
         />
       </div>
@@ -587,8 +613,8 @@ function EBookReader({ book, onClose }: { book: EBook; onClose: () => void }) {
         <div
           className="flex gap-1.5 px-4 py-2 overflow-x-auto scrollbar-hide border-b"
           style={{
-            background: "oklch(0.95 0.02 55)",
-            borderColor: "oklch(0.88 0.03 55)",
+            background: "#EFE6D0",
+            borderColor: "#D4C4A0",
           }}
         >
           {chapters.map((ch, i) => (
@@ -599,14 +625,13 @@ function EBookReader({ book, onClose }: { book: EBook; onClose: () => void }) {
               className="flex-shrink-0 px-3 py-1 rounded-full text-xs font-semibold transition-all"
               style={{
                 background:
-                  i === chapterIndex
-                    ? "oklch(0.52 0.135 38)"
-                    : "oklch(0.89 0.03 55)",
-                color: i === chapterIndex ? "white" : "oklch(0.35 0.07 40)",
+                  i === chapterIndex ? "oklch(0.68 0.16 72)" : "#EFE6D0",
+                color: i === chapterIndex ? "white" : "#5C3A1E",
                 border:
                   i === chapterIndex
-                    ? "1px solid oklch(0.44 0.12 38)"
-                    : "1px solid oklch(0.80 0.04 55)",
+                    ? "1px solid oklch(0.58 0.18 72)"
+                    : "1px solid #C4B08A",
+                fontFamily: "sans-serif",
               }}
             >
               Day {i + 1}
@@ -615,17 +640,17 @@ function EBookReader({ book, onClose }: { book: EBook; onClose: () => void }) {
         </div>
       )}
 
-      {/* Font size controls */}
+      {/* Font size controls toolbar */}
       <div
         className="flex items-center justify-between px-4 py-2"
         style={{
-          background: "oklch(0.95 0.02 55)",
-          borderBottom: "1px solid oklch(0.88 0.03 55)",
+          background: "#F5EDD8",
+          borderBottom: "1px solid #D4C4A0",
         }}
       >
         <span
           className="text-xs font-semibold"
-          style={{ color: "oklch(0.40 0.07 40)" }}
+          style={{ color: "#5C3A1E", fontFamily: "sans-serif" }}
         >
           {current
             ? `${chapterIndex + 1} / ${totalChapters} — ${current.title}`
@@ -636,17 +661,18 @@ function EBookReader({ book, onClose }: { book: EBook; onClose: () => void }) {
             type="button"
             onClick={() => setFontSize((s) => Math.max(12, s - 1))}
             className="w-6 h-6 rounded-full flex items-center justify-center"
-            style={{ background: "oklch(0.88 0.04 55)" }}
+            style={{ background: "#E8DCC8" }}
             aria-label="Decrease font size"
           >
-            <Minus size={12} color="oklch(0.35 0.07 40)" />
+            <Minus size={12} color="#5C3A1E" />
           </button>
           <span
             className="text-xs"
             style={{
-              color: "oklch(0.40 0.07 40)",
+              color: "#5C3A1E",
               minWidth: 24,
               textAlign: "center",
+              fontFamily: "sans-serif",
             }}
           >
             {fontSize}
@@ -655,29 +681,33 @@ function EBookReader({ book, onClose }: { book: EBook; onClose: () => void }) {
             type="button"
             onClick={() => setFontSize((s) => Math.min(22, s + 1))}
             className="w-6 h-6 rounded-full flex items-center justify-center"
-            style={{ background: "oklch(0.88 0.04 55)" }}
+            style={{ background: "#E8DCC8" }}
             aria-label="Increase font size"
           >
-            <Plus size={12} color="oklch(0.35 0.07 40)" />
+            <Plus size={12} color="#5C3A1E" />
           </button>
         </div>
       </div>
 
-      {/* Content */}
+      {/* Content — warm parchment with inset shadow */}
       <div
         ref={contentRef}
         className="flex-1 overflow-y-auto px-5 py-5"
-        style={{ background: "oklch(0.97 0.01 55)" }}
+        style={{
+          background: "#FDF6E3",
+          boxShadow: "inset 0 2px 12px rgba(120,80,20,0.08)",
+        }}
       >
         {current ? (
           <>
             <h2
               className="font-bold mb-5 leading-tight"
               style={{
-                color: "oklch(0.30 0.07 40)",
-                fontSize: fontSize + 3,
-                borderLeft: "4px solid oklch(0.52 0.135 38)",
-                paddingLeft: 12,
+                color: "#3B1A00",
+                fontSize: fontSize + 4,
+                fontFamily: "Georgia, serif",
+                borderLeft: "4px solid #C8540A",
+                paddingLeft: 14,
               }}
             >
               {current.title}
@@ -692,23 +722,23 @@ function EBookReader({ book, onClose }: { book: EBook; onClose: () => void }) {
           </div>
         )}
 
-        {/* Reading progress note */}
+        {/* Reading progress card */}
         <div
           className="mt-6 mb-2 rounded-xl p-3 text-center"
           style={{
-            background: "oklch(0.92 0.04 55)",
-            border: "1px solid oklch(0.84 0.05 55)",
+            background: "#F0E6C8",
+            border: "1px solid #D4B880",
           }}
         >
           <p
             className="text-xs font-semibold"
-            style={{ color: "oklch(0.40 0.07 40)" }}
+            style={{ color: "#5C3A1E", fontFamily: "sans-serif" }}
           >
             {progress}% complete
           </p>
           <p
             className="text-xs mt-0.5"
-            style={{ color: "oklch(0.55 0.06 55)" }}
+            style={{ color: "#8A6040", fontFamily: "sans-serif" }}
           >
             {chapterIndex < totalChapters - 1
               ? `Next: ${chapters[chapterIndex + 1]?.title}`
@@ -721,8 +751,8 @@ function EBookReader({ book, onClose }: { book: EBook; onClose: () => void }) {
       <div
         className="flex items-center justify-between px-5 pb-8 pt-3"
         style={{
-          background: "oklch(0.97 0.01 55)",
-          borderTop: "1px solid oklch(0.88 0.03 55)",
+          background: "#F5EDD8",
+          borderTop: "1px solid #D4C4A0",
         }}
       >
         <button
@@ -731,14 +761,18 @@ function EBookReader({ book, onClose }: { book: EBook; onClose: () => void }) {
           disabled={chapterIndex === 0}
           className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl font-semibold text-sm transition-all disabled:opacity-40"
           style={{
-            background: "oklch(0.90 0.03 55)",
-            color: "oklch(0.30 0.07 40)",
+            background: "#E8DCC8",
+            color: "#3B1A00",
+            fontFamily: "sans-serif",
           }}
         >
           <ChevronLeft size={16} /> Prev
         </button>
 
-        <span className="text-xs" style={{ color: "oklch(0.50 0.07 40)" }}>
+        <span
+          className="text-xs"
+          style={{ color: "#7A4A20", fontFamily: "sans-serif" }}
+        >
           {chapterIndex + 1} / {totalChapters}
         </span>
 
@@ -750,8 +784,9 @@ function EBookReader({ book, onClose }: { book: EBook; onClose: () => void }) {
           disabled={chapterIndex >= totalChapters - 1}
           className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl font-semibold text-sm transition-all disabled:opacity-40"
           style={{
-            background: "oklch(0.52 0.135 38)",
+            background: "oklch(0.40 0.12 38)",
             color: "white",
+            fontFamily: "sans-serif",
           }}
         >
           Next <ChevronRight size={16} />
@@ -1262,13 +1297,11 @@ export default function EBookSection() {
         ))}
       </div>
 
-      {/* Book Grid */}
+      {/* Book List */}
       <div
-        className="grid grid-cols-2 gap-3 overflow-hidden transition-all duration-500"
+        className="space-y-2 overflow-hidden transition-all duration-500"
         style={{
-          maxHeight: expanded
-            ? `${Math.ceil(filtered.length / 2) * 190}px`
-            : "290px",
+          maxHeight: expanded ? `${filtered.length * 64}px` : "136px",
         }}
       >
         {visible.map((book, idx) => (
@@ -1277,14 +1310,16 @@ export default function EBookSection() {
             type="button"
             data-ocid={`ebook.item.${idx + 1}`}
             onClick={() => setSelectedBook(book)}
-            className="bg-card rounded-2xl overflow-hidden text-left"
+            className="w-full flex items-center gap-3 bg-card rounded-xl px-3 py-2 text-left"
             style={{
-              boxShadow: "0 3px 12px rgba(0,0,0,0.10)",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
               border: "1px solid oklch(0.90 0.02 55)",
+              minHeight: "56px",
             }}
           >
+            {/* Cover Thumbnail */}
             <div
-              className="relative h-20 flex items-center justify-center overflow-hidden"
+              className="w-10 h-10 rounded-lg flex-shrink-0 flex items-center justify-center overflow-hidden"
               style={{ background: book.gradient }}
             >
               {book.coverUrl ? (
@@ -1294,70 +1329,34 @@ export default function EBookSection() {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <BookOpen size={22} color="rgba(255,255,255,0.8)" />
-              )}
-              <div
-                className="absolute top-1.5 right-1.5 px-1.5 py-0.5 rounded-full text-white"
-                style={{
-                  background: "rgba(0,0,0,0.35)",
-                  fontSize: "9px",
-                  fontWeight: 600,
-                }}
-              >
-                {book.genre}
-              </div>
-              {book.chapters && (
-                <div
-                  className="absolute bottom-1.5 left-1.5 px-1.5 py-0.5 rounded-full text-white flex items-center gap-0.5"
-                  style={{
-                    background: "rgba(0,0,0,0.35)",
-                    fontSize: "8px",
-                    fontWeight: 600,
-                  }}
-                >
-                  📖 {book.chapters.length} ch
-                </div>
+                <BookOpen size={16} color="rgba(255,255,255,0.9)" />
               )}
             </div>
 
-            <div className="p-2">
-              <h3
-                className="text-xs text-foreground leading-tight mb-0.5"
-                style={{ fontWeight: 700 }}
-              >
+            {/* Text */}
+            <div className="flex-1 min-w-0">
+              <h3 className="text-xs font-semibold text-foreground leading-tight truncate">
                 {book.title}
               </h3>
               <p
-                className="text-xs text-muted-foreground mb-1"
+                className="text-muted-foreground truncate"
                 style={{ fontSize: "10px" }}
               >
                 {book.author}
               </p>
-              <div className="flex items-center justify-between mb-1.5">
-                <Badge
-                  className="text-white px-1.5 py-0 rounded-full"
-                  style={{
-                    background:
-                      genreColors[book.genre] || "oklch(0.52 0.135 38)",
-                    fontSize: "9px",
-                    border: "none",
-                  }}
-                >
-                  {book.genre}
-                </Badge>
-                <StarRating rating={book.rating} />
-              </div>
-              <div
-                className="w-full py-1 rounded-lg text-center"
-                style={{
-                  background: "oklch(0.52 0.135 38)",
-                  color: "white",
-                  fontSize: "10px",
-                  fontWeight: 600,
-                }}
-              >
-                Read Now
-              </div>
+            </div>
+
+            {/* Read Button */}
+            <div
+              className="flex-shrink-0 px-2 py-1 rounded-lg"
+              style={{
+                background: "oklch(0.52 0.135 38)",
+                color: "white",
+                fontSize: "10px",
+                fontWeight: 600,
+              }}
+            >
+              Read
             </div>
           </button>
         ))}

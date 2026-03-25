@@ -14,6 +14,11 @@ interface Profile {
   location?: string;
   languages?: string;
   memberSince?: string;
+  distance: string;
+  qualification: string;
+  hobbies: string[];
+  matchedInterests: string[];
+  matchedHobbies: string[];
 }
 
 const PROFILES: Profile[] = [
@@ -28,6 +33,11 @@ const PROFILES: Profile[] = [
     location: "Raipur, Chhattisgarh",
     languages: "Hindi, Gondi",
     memberSince: "Adinivaas since 2023",
+    distance: "8 km away",
+    qualification: "B.A. Arts",
+    hobbies: ["Pottery", "Forest Walks", "Painting"],
+    matchedInterests: ["Music", "Tribal Arts"],
+    matchedHobbies: ["Pottery"],
   },
   {
     id: 2,
@@ -40,6 +50,11 @@ const PROFILES: Profile[] = [
     location: "Udaipur, Rajasthan",
     languages: "Hindi, Bhili",
     memberSince: "Adinivaas since 2022",
+    distance: "23 km away",
+    qualification: "12th Pass",
+    hobbies: ["Archery", "Cooking", "Storytelling"],
+    matchedInterests: ["Crafts", "Folklore"],
+    matchedHobbies: ["Archery"],
   },
   {
     id: 3,
@@ -52,6 +67,11 @@ const PROFILES: Profile[] = [
     location: "Ranchi, Jharkhand",
     languages: "Hindi, Mundari",
     memberSince: "Adinivaas since 2024",
+    distance: "45 km away",
+    qualification: "Diploma - Nursing",
+    hobbies: ["Cooking", "Dancing", "Gardening"],
+    matchedInterests: ["Dance", "Nature"],
+    matchedHobbies: ["Cooking"],
   },
   {
     id: 4,
@@ -64,6 +84,11 @@ const PROFILES: Profile[] = [
     location: "Dumka, Jharkhand",
     languages: "Hindi, Santali",
     memberSince: "Adinivaas since 2022",
+    distance: "62 km away",
+    qualification: "Graduate - Agriculture",
+    hobbies: ["Instrument Playing", "Organic Farming", "Bird Watching"],
+    matchedInterests: ["Music", "Agriculture"],
+    matchedHobbies: [],
   },
   {
     id: 5,
@@ -76,6 +101,11 @@ const PROFILES: Profile[] = [
     location: "Palghar, Maharashtra",
     languages: "Hindi, Warli, Marathi",
     memberSince: "Adinivaas since 2023",
+    distance: "110 km away",
+    qualification: "B.F.A. Fine Arts",
+    hobbies: ["Mural Painting", "Meditation", "Temple Visits"],
+    matchedInterests: ["Painting", "Heritage"],
+    matchedHobbies: ["Mural Painting"],
   },
   {
     id: 6,
@@ -88,6 +118,11 @@ const PROFILES: Profile[] = [
     location: "Betul, Madhya Pradesh",
     languages: "Hindi, Korku",
     memberSince: "Adinivaas since 2023",
+    distance: "35 km away",
+    qualification: "Diploma - Herbal Science",
+    hobbies: ["Forest Walks", "Herb Collection", "Flute Playing"],
+    matchedInterests: ["Forest", "Music"],
+    matchedHobbies: ["Forest Walks"],
   },
   {
     id: 7,
@@ -100,6 +135,11 @@ const PROFILES: Profile[] = [
     location: "Jagdalpur, Chhattisgarh",
     languages: "Hindi, Halbi",
     memberSince: "Adinivaas since 2024",
+    distance: "78 km away",
+    qualification: "B.Com",
+    hobbies: ["Weaving", "Recipe Making", "Nature Trails"],
+    matchedInterests: ["Weaving", "Food"],
+    matchedHobbies: [],
   },
   {
     id: 8,
@@ -112,6 +152,11 @@ const PROFILES: Profile[] = [
     location: "Mandla, Madhya Pradesh",
     languages: "Hindi, Gondi",
     memberSince: "Adinivaas since 2022",
+    distance: "17 km away",
+    qualification: "Graduate - Forestry",
+    hobbies: ["Wildlife Photography", "Farming", "Cooking"],
+    matchedInterests: ["Arts", "Farming"],
+    matchedHobbies: ["Cooking"],
   },
   {
     id: 9,
@@ -124,6 +169,11 @@ const PROFILES: Profile[] = [
     location: "Dhar, Madhya Pradesh",
     languages: "Hindi, Bhili",
     memberSince: "Adinivaas since 2023",
+    distance: "52 km away",
+    qualification: "10th Pass",
+    hobbies: ["Singing", "Embroidery", "Ritual Dance"],
+    matchedInterests: ["Singing", "Crafts"],
+    matchedHobbies: ["Embroidery"],
   },
   {
     id: 10,
@@ -136,6 +186,11 @@ const PROFILES: Profile[] = [
     location: "Khunti, Jharkhand",
     languages: "Hindi, Mundari",
     memberSince: "Adinivaas since 2021",
+    distance: "90 km away",
+    qualification: "B.A. Social Work",
+    hobbies: ["Wrestling", "Community Events", "River Fishing"],
+    matchedInterests: ["Nature", "Community"],
+    matchedHobbies: [],
   },
 ];
 
@@ -150,14 +205,14 @@ const SPARKLE_POSITIONS = Array.from({ length: 20 }, (_, i) => ({
 }));
 
 const INTEREST_COLORS = [
-  "oklch(0.92 0.04 38)",
   "oklch(0.92 0.04 145)",
+  "oklch(0.92 0.04 38)",
   "oklch(0.92 0.04 260)",
 ];
 
 const INTEREST_TEXT_COLORS = [
-  "oklch(0.35 0.1 38)",
   "oklch(0.3 0.1 145)",
+  "oklch(0.35 0.1 38)",
   "oklch(0.3 0.1 260)",
 ];
 
@@ -220,7 +275,7 @@ export default function SangiDatingPage({ onStartChat }: SangiDatingPageProps) {
         <div>
           <h2
             className="text-xl font-bold"
-            style={{ color: "oklch(0.35 0.12 38)" }}
+            style={{ color: "oklch(0.35 0.14 145)" }}
           >
             Tribal Sangi
           </h2>
@@ -230,16 +285,16 @@ export default function SangiDatingPage({ onStartChat }: SangiDatingPageProps) {
         </div>
         <div
           className="flex items-center gap-1 px-3 py-1 rounded-full"
-          style={{ background: "oklch(0.95 0.03 38)" }}
+          style={{ background: "oklch(0.93 0.04 145)" }}
         >
           <Heart
             size={14}
-            fill="oklch(0.52 0.135 38)"
-            style={{ color: "oklch(0.52 0.135 38)" }}
+            fill="oklch(0.55 0.16 145)"
+            style={{ color: "oklch(0.55 0.16 145)" }}
           />
           <span
             className="text-xs font-semibold"
-            style={{ color: "oklch(0.35 0.12 38)" }}
+            style={{ color: "oklch(0.35 0.14 145)" }}
           >
             {PROFILES.length - currentIndex} left
           </span>
@@ -255,7 +310,7 @@ export default function SangiDatingPage({ onStartChat }: SangiDatingPageProps) {
             <div className="text-5xl mb-4">💞</div>
             <p
               className="text-lg font-bold"
-              style={{ color: "oklch(0.35 0.12 38)" }}
+              style={{ color: "oklch(0.35 0.14 145)" }}
             >
               You've seen everyone!
             </p>
@@ -266,7 +321,7 @@ export default function SangiDatingPage({ onStartChat }: SangiDatingPageProps) {
               type="button"
               onClick={() => setCurrentIndex(0)}
               className="mt-4 px-6 py-2 rounded-full text-sm font-semibold text-white"
-              style={{ background: "oklch(0.52 0.135 38)" }}
+              style={{ background: "oklch(0.55 0.16 145)" }}
               data-ocid="sangi.primary_button"
             >
               Start Over
@@ -292,7 +347,7 @@ export default function SangiDatingPage({ onStartChat }: SangiDatingPageProps) {
                   className="absolute inset-0"
                   style={{
                     background:
-                      "linear-gradient(to top, oklch(0.2 0.08 38) 30%, transparent 60%)",
+                      "linear-gradient(to top, oklch(0.25 0.12 145) 30%, transparent 60%)",
                   }}
                 />
               </div>
@@ -322,9 +377,19 @@ export default function SangiDatingPage({ onStartChat }: SangiDatingPageProps) {
                     className="absolute inset-0"
                     style={{
                       background:
-                        "linear-gradient(to top, oklch(0.15 0.08 38) 40%, transparent 70%)",
+                        "linear-gradient(to top, oklch(0.15 0.10 145) 40%, transparent 70%)",
                     }}
                   />
+                  {/* Distance badge top-right */}
+                  <div
+                    className="absolute top-3 right-3 flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold"
+                    style={{
+                      background: "oklch(0.45 0.14 145)",
+                      color: "white",
+                    }}
+                  >
+                    📍 {current.distance}
+                  </div>
                   <div className="absolute bottom-0 left-0 right-0 px-5 pb-5">
                     <h3 className="text-2xl font-bold text-white">
                       {current.name}, {current.age}
@@ -332,8 +397,11 @@ export default function SangiDatingPage({ onStartChat }: SangiDatingPageProps) {
                     <p className="text-sm text-white/80 mt-0.5">
                       🏡 {current.tribe} Tribe
                     </p>
+                    <p className="text-xs text-white/70 mt-0.5">
+                      🎓 {current.qualification}
+                    </p>
                     <p className="text-xs text-white/70 mt-1">{current.bio}</p>
-                    <div className="flex flex-wrap gap-2 mt-3">
+                    <div className="flex flex-wrap gap-1.5 mt-2">
                       {current.interests.map((interest, i) => (
                         <span
                           key={interest}
@@ -341,13 +409,33 @@ export default function SangiDatingPage({ onStartChat }: SangiDatingPageProps) {
                           style={{
                             background:
                               INTEREST_COLORS[i % INTEREST_COLORS.length],
-                            color: "oklch(0.3 0.1 38)",
+                            color:
+                              INTEREST_TEXT_COLORS[
+                                i % INTEREST_TEXT_COLORS.length
+                              ],
                           }}
                         >
                           {interest}
                         </span>
                       ))}
                     </div>
+                    {/* Matched hobbies */}
+                    {current.matchedHobbies.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5 mt-1.5">
+                        {current.matchedHobbies.map((hobby) => (
+                          <span
+                            key={hobby}
+                            className="text-xs px-2.5 py-1 rounded-full font-medium"
+                            style={{
+                              background: "oklch(0.88 0.04 55)",
+                              color: "oklch(0.35 0.10 55)",
+                            }}
+                          >
+                            ✓ {hobby}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </motion.div>
               ) : (
@@ -386,7 +474,7 @@ export default function SangiDatingPage({ onStartChat }: SangiDatingPageProps) {
             type="button"
             onClick={() => handleAction("right")}
             className="w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-white hover:scale-110 transition-transform"
-            style={{ background: "oklch(0.52 0.135 38)" }}
+            style={{ background: "oklch(0.55 0.16 145)" }}
             data-ocid="sangi.primary_button"
           >
             <Heart size={26} fill="white" />
@@ -404,7 +492,7 @@ export default function SangiDatingPage({ onStartChat }: SangiDatingPageProps) {
             className="fixed inset-0 z-50 flex flex-col items-center justify-center"
             style={{
               background:
-                "linear-gradient(135deg, oklch(0.35 0.12 38), oklch(0.45 0.14 15), oklch(0.52 0.135 38))",
+                "linear-gradient(135deg, oklch(0.25 0.12 145), oklch(0.45 0.14 145), oklch(0.35 0.10 55))",
             }}
             data-ocid="sangi.modal"
           >
@@ -461,7 +549,7 @@ export default function SangiDatingPage({ onStartChat }: SangiDatingPageProps) {
                 <button
                   type="button"
                   className="w-full py-3 rounded-full font-bold text-base flex items-center justify-center gap-2"
-                  style={{ background: "white", color: "oklch(0.35 0.12 38)" }}
+                  style={{ background: "white", color: "oklch(0.35 0.14 145)" }}
                   onClick={() => handleStartChatting(matchedProfile)}
                   data-ocid="sangi.confirm_button"
                 >
@@ -470,7 +558,7 @@ export default function SangiDatingPage({ onStartChat }: SangiDatingPageProps) {
                 <button
                   type="button"
                   className="w-full py-3 rounded-full font-semibold text-sm text-white flex items-center justify-center gap-2 border-2"
-                  style={{ borderColor: "oklch(0.85 0.12 85)" }}
+                  style={{ borderColor: "oklch(0.72 0.13 145)" }}
                   onClick={handleViewProfile}
                   data-ocid="sangi.open_modal_button"
                 >
@@ -508,12 +596,11 @@ export default function SangiDatingPage({ onStartChat }: SangiDatingPageProps) {
               transition={{ type: "spring", stiffness: 300, damping: 32 }}
               className="w-full max-w-sm rounded-t-3xl overflow-hidden shadow-2xl"
               style={{
-                background: "oklch(0.98 0.01 60)",
+                background: "oklch(0.98 0.01 145)",
                 maxHeight: "90vh",
                 overflowY: "auto",
               }}
             >
-              {/* Profile Photo */}
               <div className="relative w-full" style={{ height: "240px" }}>
                 <img
                   src={matchedProfile.avatar}
@@ -524,7 +611,7 @@ export default function SangiDatingPage({ onStartChat }: SangiDatingPageProps) {
                   className="absolute inset-0"
                   style={{
                     background:
-                      "linear-gradient(to top, oklch(0.98 0.01 60) 0%, transparent 60%)",
+                      "linear-gradient(to top, oklch(0.98 0.01 145) 0%, transparent 60%)",
                   }}
                 />
                 <button
@@ -540,7 +627,7 @@ export default function SangiDatingPage({ onStartChat }: SangiDatingPageProps) {
                   <span
                     className="text-xs font-bold px-3 py-1 rounded-full"
                     style={{
-                      background: "oklch(0.52 0.135 38)",
+                      background: "oklch(0.55 0.16 145)",
                       color: "white",
                       letterSpacing: "0.04em",
                     }}
@@ -550,32 +637,48 @@ export default function SangiDatingPage({ onStartChat }: SangiDatingPageProps) {
                 </div>
               </div>
 
-              {/* Profile Content */}
               <div className="px-5 pb-6 -mt-4">
-                <div className="mb-3">
+                <div className="mb-2">
                   <h2
                     className="text-2xl font-black"
-                    style={{ color: "oklch(0.25 0.1 38)" }}
+                    style={{ color: "oklch(0.25 0.10 145)" }}
                   >
                     {matchedProfile.name}, {matchedProfile.age}
                   </h2>
                   <p
                     className="text-sm font-semibold mt-0.5"
-                    style={{ color: "oklch(0.52 0.135 38)" }}
+                    style={{ color: "oklch(0.55 0.16 145)" }}
                   >
                     🏡 {matchedProfile.tribe} Tribe
                   </p>
+                  <p
+                    className="text-xs mt-0.5"
+                    style={{ color: "oklch(0.50 0.06 55)" }}
+                  >
+                    🎓 {matchedProfile.qualification}
+                  </p>
                 </div>
 
-                <div
-                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold mb-4"
-                  style={{
-                    background: "oklch(0.92 0.06 145)",
-                    color: "oklch(0.3 0.1 145)",
-                  }}
-                >
-                  <span className="w-1.5 h-1.5 rounded-full bg-green-500 inline-block" />
-                  Active • Looking for connections
+                <div className="flex items-center gap-2 mb-3">
+                  <div
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold"
+                    style={{
+                      background: "oklch(0.93 0.04 145)",
+                      color: "oklch(0.3 0.1 145)",
+                    }}
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-green-500 inline-block" />
+                    Active • Looking for connections
+                  </div>
+                  <div
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold"
+                    style={{
+                      background: "oklch(0.45 0.14 145)",
+                      color: "white",
+                    }}
+                  >
+                    📍 {matchedProfile.distance}
+                  </div>
                 </div>
 
                 <p
@@ -585,14 +688,14 @@ export default function SangiDatingPage({ onStartChat }: SangiDatingPageProps) {
                   {matchedProfile.bio}
                 </p>
 
-                <div className="mb-4">
+                <div className="mb-3">
                   <p
-                    className="text-xs font-bold uppercase tracking-wider mb-2"
-                    style={{ color: "oklch(0.52 0.135 38)" }}
+                    className="text-xs font-bold uppercase tracking-wider mb-1.5"
+                    style={{ color: "oklch(0.55 0.16 145)" }}
                   >
                     Interests
                   </p>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-1.5">
                     {matchedProfile.interests.map((interest, i) => (
                       <span
                         key={interest}
@@ -612,14 +715,37 @@ export default function SangiDatingPage({ onStartChat }: SangiDatingPageProps) {
                   </div>
                 </div>
 
+                <div className="mb-3">
+                  <p
+                    className="text-xs font-bold uppercase tracking-wider mb-1.5"
+                    style={{ color: "oklch(0.42 0.08 55)" }}
+                  >
+                    Hobbies
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {matchedProfile.hobbies.map((hobby) => (
+                      <span
+                        key={hobby}
+                        className="text-xs px-3 py-1.5 rounded-full font-semibold"
+                        style={{
+                          background: "oklch(0.88 0.04 55)",
+                          color: "oklch(0.40 0.10 55)",
+                        }}
+                      >
+                        {hobby}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
                 <div
                   className="rounded-2xl p-4 mb-5 space-y-3"
-                  style={{ background: "oklch(0.95 0.02 38)" }}
+                  style={{ background: "oklch(0.93 0.04 145)" }}
                 >
                   <div className="flex items-center gap-2.5">
                     <MapPin
                       size={14}
-                      style={{ color: "oklch(0.52 0.135 38)" }}
+                      style={{ color: "oklch(0.55 0.16 145)" }}
                     />
                     <div>
                       <p className="text-xs text-muted-foreground">Location</p>
@@ -661,7 +787,7 @@ export default function SangiDatingPage({ onStartChat }: SangiDatingPageProps) {
                   type="button"
                   onClick={() => handleStartChatting(matchedProfile)}
                   className="w-full py-3.5 rounded-full font-bold text-base flex items-center justify-center gap-2 text-white shadow-md"
-                  style={{ background: "oklch(0.52 0.135 38)" }}
+                  style={{ background: "oklch(0.55 0.16 145)" }}
                   data-ocid="sangi.confirm_button"
                 >
                   <MessageCircle size={18} /> Send Message

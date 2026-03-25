@@ -128,7 +128,7 @@ export default function App() {
                 <EBookSection />
               </div>
               <div id="section-tribal-sangi">
-                <TribalSangiSection />
+                <TribalSangiSection onOpenSangi={() => setActiveTab("sangi")} />
               </div>
               <EdTechSection />
             </motion.div>

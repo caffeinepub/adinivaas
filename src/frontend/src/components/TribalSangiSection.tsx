@@ -1,88 +1,201 @@
-import { HeartHandshake, Lock } from "lucide-react";
+import { HeartHandshake, MessageCircle } from "lucide-react";
 import { motion } from "motion/react";
 import FeedSection from "./FeedSection";
 
-const mockSangi = [
-  { id: 1, image: "https://picsum.photos/seed/sangi1/200/200" },
-  { id: 2, image: "https://picsum.photos/seed/sangi2/200/200" },
-  { id: 3, image: "https://picsum.photos/seed/sangi3/200/200" },
-  { id: 4, image: "https://picsum.photos/seed/sangi4/200/200" },
+const TEASER_PROFILES = [
+  {
+    id: 1,
+    name: "Priya",
+    age: 24,
+    tribe: "Gond",
+    avatar: "https://picsum.photos/seed/spriya1/400/600",
+    distance: "8 km away",
+    qualification: "B.A. Arts",
+    matchedInterests: ["🎵 Music", "🌿 Nature"],
+    matchedHobbies: ["🏺 Pottery"],
+  },
+  {
+    id: 2,
+    name: "Arjun",
+    age: 27,
+    tribe: "Bhil",
+    avatar: "https://picsum.photos/seed/sarjun2/400/600",
+    distance: "23 km away",
+    qualification: "12th Pass",
+    matchedInterests: ["🎨 Crafts", "📖 Folklore"],
+    matchedHobbies: ["🏹 Archery"],
+  },
+  {
+    id: 3,
+    name: "Meena",
+    age: 22,
+    tribe: "Munda",
+    avatar: "https://picsum.photos/seed/smeena3/400/600",
+    distance: "45 km away",
+    qualification: "Diploma - Nursing",
+    matchedInterests: ["💃 Dance", "🌿 Nature"],
+    matchedHobbies: ["🍳 Cooking"],
+  },
 ];
 
-export default function TribalSangiSection() {
+export default function TribalSangiSection({
+  onOpenSangi,
+}: { onOpenSangi?: () => void }) {
   return (
     <FeedSection title="Tribal Sangi" icon={HeartHandshake}>
-      <div className="px-4">
+      <div className="px-4 pb-2">
+        {/* Section subtitle */}
+        <p className="text-xs mb-3" style={{ color: "oklch(0.50 0.10 145)" }}>
+          Find your tribal match 💞
+        </p>
+
+        {/* Teaser Profile Cards */}
         <div
-          className="relative rounded-2xl overflow-hidden"
-          style={{
-            border: "1.5px solid oklch(0.89 0.032 68)",
-            boxShadow: "0 6px 18px rgba(0,0,0,0.08)",
-          }}
+          className="flex gap-3 overflow-x-auto pb-2"
+          style={{ scrollbarWidth: "none" }}
         >
-          <div className="grid grid-cols-2 gap-1">
-            {mockSangi.map((item, idx) => (
-              <div
-                key={item.id}
-                className="relative"
-                data-ocid={`tribal_sangi.item.${idx + 1}`}
-              >
-                <img
-                  src={item.image}
-                  alt="Premium content"
-                  className="w-full h-24 object-cover"
-                  style={{ filter: "blur(8px)", transform: "scale(1.05)" }}
-                />
-              </div>
-            ))}
-          </div>
-          <div
-            className="absolute inset-0 flex flex-col items-center justify-center gap-3"
-            style={{
-              background: "rgba(244, 235, 221, 0.75)",
-              backdropFilter: "blur(2px)",
-            }}
-          >
-            <div
-              className="w-12 h-12 rounded-full flex items-center justify-center"
+          {TEASER_PROFILES.map((profile) => (
+            <motion.div
+              key={profile.id}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex-shrink-0 rounded-2xl overflow-hidden bg-white shadow-sm"
               style={{
-                background: "oklch(0.72 0.13 145)",
-                boxShadow: "0 4px 12px rgba(60,160,80,0.30)",
+                width: "175px",
+                border: "1px solid oklch(0.88 0.05 145)",
+                borderLeftWidth: "4px",
+                borderLeftColor: "oklch(0.55 0.16 145)",
               }}
             >
-              <Lock size={22} color="white" />
-            </div>
-            <div className="text-center px-4">
-              <p
-                className="text-sm font-700 text-foreground mb-1"
-                style={{ fontWeight: 700 }}
-              >
-                Premium Content
-              </p>
-              <p className="text-xs text-muted-foreground">
-                Subscribe to unlock Tribal Sangi
-              </p>
-              <p
-                className="text-xs mt-1.5 px-2 py-1 rounded-lg"
-                style={{
-                  color: "oklch(0.45 0.10 40)",
-                  background: "oklch(0.95 0.03 68)",
-                  fontWeight: 500,
-                  border: "1px solid oklch(0.85 0.05 68)",
-                }}
-              >
-                📋 Adhar Card / ST Certificate is mandatory for verification
-              </p>
-            </div>
-            <motion.button
-              whileTap={{ scale: 0.96 }}
-              className="px-6 py-2.5 rounded-full text-sm font-600 text-white transition-opacity hover:opacity-90"
-              style={{ background: "oklch(0.62 0.14 145)", fontWeight: 600 }}
-              data-ocid="tribal_sangi.primary_button"
-            >
-              Subscribe Now
-            </motion.button>
-          </div>
+              {/* Photo */}
+              <div className="relative" style={{ height: "120px" }}>
+                <img
+                  src={profile.avatar}
+                  alt={profile.name}
+                  className="w-full h-full object-cover"
+                />
+                {/* Distance badge */}
+                <div
+                  className="absolute top-2 right-2 flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold"
+                  style={{ background: "oklch(0.40 0.14 145)", color: "white" }}
+                >
+                  📍 {profile.distance}
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="p-2.5">
+                {/* Name + Age */}
+                <div className="flex items-center justify-between mb-1">
+                  <span
+                    className="font-bold text-sm"
+                    style={{ color: "oklch(0.25 0.08 55)" }}
+                  >
+                    {profile.name}, {profile.age}
+                  </span>
+                </div>
+
+                {/* Tribe badge */}
+                <span
+                  className="text-xs px-2 py-0.5 rounded-full font-semibold"
+                  style={{
+                    background: "oklch(0.88 0.04 55)",
+                    color: "oklch(0.40 0.10 55)",
+                  }}
+                >
+                  🏡 {profile.tribe}
+                </span>
+
+                {/* Qualification */}
+                <p
+                  className="text-xs mt-2 mb-1.5"
+                  style={{ color: "oklch(0.50 0.06 55)" }}
+                >
+                  🎓 {profile.qualification}
+                </p>
+
+                {/* Matched Interests */}
+                <p
+                  className="text-xs font-semibold mb-1"
+                  style={{ color: "oklch(0.40 0.14 145)" }}
+                >
+                  Interests Match
+                </p>
+                <div className="flex flex-wrap gap-1 mb-1.5">
+                  {profile.matchedInterests.map((interest) => (
+                    <span
+                      key={interest}
+                      className="text-xs px-1.5 py-0.5 rounded-full font-medium"
+                      style={{
+                        background: "oklch(0.93 0.04 145)",
+                        color: "oklch(0.35 0.12 145)",
+                      }}
+                    >
+                      {interest}
+                    </span>
+                  ))}
+                </div>
+
+                {/* Matched Hobbies */}
+                {profile.matchedHobbies.length > 0 && (
+                  <>
+                    <p
+                      className="text-xs font-semibold mb-1"
+                      style={{ color: "oklch(0.42 0.08 55)" }}
+                    >
+                      Hobbies Match
+                    </p>
+                    <div className="flex flex-wrap gap-1 mb-2">
+                      {profile.matchedHobbies.map((hobby) => (
+                        <span
+                          key={hobby}
+                          className="text-xs px-1.5 py-0.5 rounded-full font-medium"
+                          style={{
+                            background: "oklch(0.88 0.04 55)",
+                            color: "oklch(0.40 0.10 55)",
+                          }}
+                        >
+                          {hobby}
+                        </span>
+                      ))}
+                    </div>
+                  </>
+                )}
+
+                {/* Message button */}
+                <button
+                  type="button"
+                  onClick={onOpenSangi}
+                  className="w-full py-1.5 rounded-full text-xs font-semibold text-white flex items-center justify-center gap-1 mt-1"
+                  style={{ background: "oklch(0.55 0.16 145)" }}
+                  data-ocid="tribal_sangi.primary_button"
+                >
+                  <MessageCircle size={12} /> Message
+                </button>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* See More Options button */}
+        <div className="flex justify-center mt-3">
+          <button
+            type="button"
+            onClick={() =>
+              document
+                .getElementById("section-tribal-sangi")
+                ?.scrollIntoView({ behavior: "smooth" })
+            }
+            className="px-5 py-2 rounded-full text-sm font-semibold border-2 transition-all"
+            style={{
+              borderColor: "oklch(0.55 0.16 145)",
+              color: "oklch(0.40 0.14 145)",
+              background: "oklch(0.97 0.02 145)",
+            }}
+            data-ocid="tribal_sangi.secondary_button"
+          >
+            See More Options →
+          </button>
         </div>
       </div>
     </FeedSection>
