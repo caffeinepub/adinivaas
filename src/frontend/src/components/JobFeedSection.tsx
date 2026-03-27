@@ -1034,6 +1034,7 @@ function _JobCard({
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function JobFeedSection() {
+  const [sectionExpanded, setSectionExpanded] = useState(false);
   const [activeCategory, setActiveCategory] = useState("All");
   const [savedJobs, setSavedJobs] = useState<number[]>([]);
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
@@ -1074,166 +1075,285 @@ export default function JobFeedSection() {
     : nearbyJobs.slice(0, NEARBY_DEFAULT);
   const extraNearby = nearbyJobs.slice(NEARBY_DEFAULT);
 
+  const previewJobs = JOBS.slice(0, 3);
+  const previewCategories = [
+    "Full-Time",
+    "Part-Time",
+    "Government Jobs",
+    "Freelance / Gigs",
+  ];
+
   return (
     <FeedSection title="Jobs" icon={Briefcase}>
       <div className="relative">
-        {/* Section Header */}
-        <div className="px-4 pb-3">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="font-bold text-foreground text-lg">Jobs</h2>
-              <p className="text-xs text-muted-foreground">
-                Opportunities for Our Community
-              </p>
-            </div>
+        {/* Minimized Header - always visible */}
+        <div className="px-4 pb-2">
+          <div className="flex items-center justify-between mb-1">
             <div className="flex items-center gap-2">
-              <button
-                type="button"
-                className="p-2 rounded-full bg-accent"
-                onClick={() => setSearchOpen((v) => !v)}
-                data-ocid="jobs.search_input"
-              >
-                <Search size={17} className="text-foreground" />
-              </button>
-              <button
-                type="button"
-                className="p-2 rounded-full bg-accent"
-                onClick={() => setFilterOpen(true)}
-                data-ocid="jobs.filter.open_modal_button"
-              >
-                <SlidersHorizontal size={17} className="text-foreground" />
-              </button>
+              <Briefcase size={18} style={{ color: "oklch(0.52 0.135 38)" }} />
+              <div>
+                <h2 className="font-bold text-foreground text-base leading-tight">
+                  Jobs
+                </h2>
+                <p className="text-xs text-muted-foreground">
+                  42 opportunities in your community
+                </p>
+              </div>
             </div>
-          </div>
-
-          {/* Inline search */}
-          <AnimatePresence>
-            {searchOpen && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                className="overflow-hidden mt-3"
-              >
-                <Input
-                  autoFocus
-                  placeholder="Search jobs, skills, companies…"
-                  className="rounded-xl"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  data-ocid="jobs.search_input"
-                />
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-
-        {/* Subcategory Pills */}
-        <div className="flex gap-2 px-4 overflow-x-auto scrollbar-hide pb-2">
-          {SUBCATEGORIES.map((cat) => (
             <button
               type="button"
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${
-                activeCategory === cat
-                  ? "text-white"
-                  : "bg-muted text-foreground"
-              }`}
-              style={
-                activeCategory === cat
-                  ? { background: "oklch(0.52 0.135 38)" }
-                  : {}
-              }
-              data-ocid="jobs.tab"
+              onClick={() => setSectionExpanded((v) => !v)}
+              className="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold text-white"
+              style={{ background: "oklch(0.52 0.135 38)" }}
+              data-ocid="jobs.toggle"
             >
-              {cat}
+              {sectionExpanded ? (
+                <>
+                  Show Less <ChevronUp size={12} />
+                </>
+              ) : (
+                <>
+                  See All <ChevronDown size={12} />
+                </>
+              )}
             </button>
+          </div>
+
+          {/* Quick Category Chips */}
+          <div className="flex gap-1.5 overflow-x-auto scrollbar-hide py-2">
+            {previewCategories.map((cat) => (
+              <button
+                key={cat}
+                type="button"
+                onClick={() => {
+                  setSectionExpanded(true);
+                  setActiveCategory(cat);
+                }}
+                className="flex-shrink-0 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 border"
+                style={{
+                  borderColor: "oklch(0.89 0.032 68)",
+                  color: "oklch(0.40 0.12 38)",
+                }}
+                data-ocid="jobs.tab"
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Compact Preview Cards - always visible */}
+        <div className="flex gap-2.5 px-4 overflow-x-auto scrollbar-hide pb-2">
+          {previewJobs.map((job, i) => (
+            <motion.button
+              key={job.id}
+              type="button"
+              whileTap={{ scale: 0.97 }}
+              onClick={() => setSelectedJob(job)}
+              className="flex-shrink-0 w-48 bg-card rounded-2xl p-3 text-left"
+              style={{
+                boxShadow: "0 3px 12px rgba(0,0,0,0.08)",
+                border: "1px solid oklch(0.91 0.028 68)",
+              }}
+              data-ocid={`jobs.card.${i + 1}`}
+            >
+              <div className="flex items-start justify-between gap-1 mb-1.5">
+                <div
+                  className="w-7 h-7 rounded-lg flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
+                  style={{ background: job.companyColor }}
+                >
+                  {job.companyInitials}
+                </div>
+                {job.verified && (
+                  <CheckCircle2
+                    size={12}
+                    className="text-green-500 flex-shrink-0 mt-0.5"
+                  />
+                )}
+              </div>
+              <p className="font-bold text-foreground text-xs leading-tight line-clamp-2">
+                {job.title}
+              </p>
+              <p className="text-muted-foreground text-xs mt-0.5 truncate">
+                {job.company}
+              </p>
+              <div className="flex items-center gap-1 mt-1">
+                <MapPin
+                  size={9}
+                  className="text-muted-foreground flex-shrink-0"
+                />
+                <span className="text-muted-foreground text-xs truncate">
+                  {job.location}
+                </span>
+              </div>
+              <div className="flex items-center justify-between mt-1.5">
+                <span
+                  className="text-xs font-bold"
+                  style={{ color: "oklch(0.38 0.14 38)" }}
+                >
+                  {job.salary}
+                </span>
+                <span
+                  className="text-xs px-1.5 py-0.5 rounded-full text-white"
+                  style={{
+                    background: "oklch(0.52 0.135 38)",
+                    fontSize: "9px",
+                  }}
+                >
+                  {job.jobType}
+                </span>
+              </div>
+              <button
+                type="button"
+                className="mt-2 w-full py-1 rounded-xl text-xs font-bold text-white"
+                style={{ background: "oklch(0.45 0.13 148)" }}
+                data-ocid="jobs.primary_button"
+              >
+                Apply Now
+              </button>
+            </motion.button>
           ))}
         </div>
 
-        {/* Featured Jobs Row */}
-        {activeCategory === "All" && (
-          <div className="mt-4">
-            <div className="px-4 flex items-center justify-between mb-2">
-              <span className="font-bold text-foreground text-sm flex items-center gap-1.5">
-                <Award size={15} className="text-yellow-600" /> Featured Jobs
-              </span>
-              {featuredJobs.length > FEATURED_DEFAULT && (
-                <button
-                  type="button"
-                  className="flex items-center gap-0.5 text-xs font-semibold"
-                  style={{ color: "oklch(0.52 0.135 38)" }}
-                  onClick={() => setFeaturedExpanded((v) => !v)}
-                  data-ocid="jobs.featured.toggle"
-                >
-                  {featuredExpanded ? (
-                    <>
-                      Show Less <ChevronUp size={13} />
-                    </>
-                  ) : (
-                    <>
-                      See All ({featuredJobs.length}) <ChevronDown size={13} />
-                    </>
-                  )}
-                </button>
-              )}
-            </div>
-            {/* Always-visible first 2 */}
-            <div className="flex gap-3 px-4 overflow-x-auto scrollbar-hide pb-2">
-              {visibleFeatured.slice(0, FEATURED_DEFAULT).map((job) => (
-                <motion.div
-                  key={job.id}
-                  whileTap={{ scale: 0.97 }}
-                  onClick={() => setSelectedJob(job)}
-                  className="flex-shrink-0 w-56 rounded-2xl overflow-hidden cursor-pointer"
-                  style={{
-                    background: `linear-gradient(135deg, ${job.companyColor}dd, ${job.companyColor}88)`,
-                    boxShadow: "0 6px 20px rgba(0,0,0,0.15)",
-                  }}
-                  data-ocid={`jobs.card.${job.id}`}
-                >
-                  <div className="p-4">
-                    <Badge className="bg-white/20 text-white border-0 text-xs mb-3">
-                      {job.tags.includes("Urgent")
-                        ? "🔥 Urgent"
-                        : "⭐ Featured"}
-                    </Badge>
-                    <p className="font-bold text-white text-sm leading-tight">
-                      {job.title}
+        {/* See All Jobs CTA */}
+        {!sectionExpanded && (
+          <div className="px-4 pb-3 pt-1">
+            <button
+              type="button"
+              onClick={() => setSectionExpanded(true)}
+              className="w-full flex items-center justify-center gap-1.5 py-2 rounded-xl text-sm font-bold"
+              style={{
+                border: "1.5px solid oklch(0.70 0.08 38)",
+                color: "oklch(0.38 0.14 38)",
+              }}
+              data-ocid="jobs.secondary_button"
+            >
+              See All Jobs <ChevronRight size={14} />
+            </button>
+          </div>
+        )}
+
+        {/* Full Jobs Content - Expanded */}
+        <AnimatePresence>
+          {sectionExpanded && (
+            <motion.div
+              key="jobs-expanded"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.35, ease: "easeInOut" }}
+              style={{ overflow: "hidden" }}
+            >
+              {/* Section Header (inside expanded) */}
+              <div className="px-4 pt-2 pb-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h2 className="font-bold text-foreground text-lg">Jobs</h2>
+                    <p className="text-xs text-muted-foreground">
+                      Opportunities for Our Community
                     </p>
-                    <p className="text-white/80 text-xs mt-1">{job.company}</p>
-                    <div className="flex items-center gap-1 mt-2">
-                      <MapPin size={11} className="text-white/70" />
-                      <span className="text-white/70 text-xs">
-                        {job.location}
-                      </span>
-                    </div>
-                    <div className="mt-3 flex items-center justify-between">
-                      <span className="text-white font-bold text-xs">
-                        {job.salary}
-                      </span>
-                      <span className="text-white/70 text-xs">
-                        {job.jobType}
-                      </span>
-                    </div>
                   </div>
-                </motion.div>
-              ))}
-            </div>
-            {/* Expanded extra cards */}
-            <AnimatePresence>
-              {featuredExpanded && extraFeatured.length > 0 && (
-                <motion.div
-                  key="featured-extra"
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.3, ease: "easeInOut" }}
-                  style={{ overflow: "hidden" }}
-                >
-                  <div className="flex gap-3 px-4 overflow-x-auto scrollbar-hide pb-2 pt-1">
-                    {extraFeatured.map((job) => (
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      className="p-2 rounded-full bg-accent"
+                      onClick={() => setSearchOpen((v) => !v)}
+                      data-ocid="jobs.search_input"
+                    >
+                      <Search size={17} className="text-foreground" />
+                    </button>
+                    <button
+                      type="button"
+                      className="p-2 rounded-full bg-accent"
+                      onClick={() => setFilterOpen(true)}
+                      data-ocid="jobs.filter.open_modal_button"
+                    >
+                      <SlidersHorizontal
+                        size={17}
+                        className="text-foreground"
+                      />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Inline search */}
+                <AnimatePresence>
+                  {searchOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="overflow-hidden mt-3"
+                    >
+                      <Input
+                        autoFocus
+                        placeholder="Search jobs, skills, companies…"
+                        className="rounded-xl"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        data-ocid="jobs.search_input"
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* Subcategory Pills */}
+              <div className="flex gap-2 px-4 overflow-x-auto scrollbar-hide pb-2">
+                {SUBCATEGORIES.map((cat) => (
+                  <button
+                    type="button"
+                    key={cat}
+                    onClick={() => setActiveCategory(cat)}
+                    className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${
+                      activeCategory === cat
+                        ? "text-white"
+                        : "bg-muted text-foreground"
+                    }`}
+                    style={
+                      activeCategory === cat
+                        ? { background: "oklch(0.52 0.135 38)" }
+                        : {}
+                    }
+                    data-ocid="jobs.tab"
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+
+              {/* Featured Jobs Row */}
+              {activeCategory === "All" && (
+                <div className="mt-4">
+                  <div className="px-4 flex items-center justify-between mb-2">
+                    <span className="font-bold text-foreground text-sm flex items-center gap-1.5">
+                      <Award size={15} className="text-yellow-600" /> Featured
+                      Jobs
+                    </span>
+                    {featuredJobs.length > FEATURED_DEFAULT && (
+                      <button
+                        type="button"
+                        className="flex items-center gap-0.5 text-xs font-semibold"
+                        style={{ color: "oklch(0.52 0.135 38)" }}
+                        onClick={() => setFeaturedExpanded((v) => !v)}
+                        data-ocid="jobs.featured.toggle"
+                      >
+                        {featuredExpanded ? (
+                          <>
+                            Show Less <ChevronUp size={13} />
+                          </>
+                        ) : (
+                          <>
+                            See All ({featuredJobs.length}){" "}
+                            <ChevronDown size={13} />
+                          </>
+                        )}
+                      </button>
+                    )}
+                  </div>
+                  {/* Always-visible first 2 */}
+                  <div className="flex gap-3 px-4 overflow-x-auto scrollbar-hide pb-2">
+                    {visibleFeatured.slice(0, FEATURED_DEFAULT).map((job) => (
                       <motion.div
                         key={job.id}
                         whileTap={{ scale: 0.97 }}
@@ -1275,226 +1395,253 @@ export default function JobFeedSection() {
                       </motion.div>
                     ))}
                   </div>
-                </motion.div>
+                  {/* Expanded extra cards */}
+                  <AnimatePresence>
+                    {featuredExpanded && extraFeatured.length > 0 && (
+                      <motion.div
+                        key="featured-extra"
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                        style={{ overflow: "hidden" }}
+                      >
+                        <div className="flex gap-3 px-4 overflow-x-auto scrollbar-hide pb-2 pt-1">
+                          {extraFeatured.map((job) => (
+                            <motion.div
+                              key={job.id}
+                              whileTap={{ scale: 0.97 }}
+                              onClick={() => setSelectedJob(job)}
+                              className="flex-shrink-0 w-56 rounded-2xl overflow-hidden cursor-pointer"
+                              style={{
+                                background: `linear-gradient(135deg, ${job.companyColor}dd, ${job.companyColor}88)`,
+                                boxShadow: "0 6px 20px rgba(0,0,0,0.15)",
+                              }}
+                              data-ocid={`jobs.card.${job.id}`}
+                            >
+                              <div className="p-4">
+                                <Badge className="bg-white/20 text-white border-0 text-xs mb-3">
+                                  {job.tags.includes("Urgent")
+                                    ? "🔥 Urgent"
+                                    : "⭐ Featured"}
+                                </Badge>
+                                <p className="font-bold text-white text-sm leading-tight">
+                                  {job.title}
+                                </p>
+                                <p className="text-white/80 text-xs mt-1">
+                                  {job.company}
+                                </p>
+                                <div className="flex items-center gap-1 mt-2">
+                                  <MapPin size={11} className="text-white/70" />
+                                  <span className="text-white/70 text-xs">
+                                    {job.location}
+                                  </span>
+                                </div>
+                                <div className="mt-3 flex items-center justify-between">
+                                  <span className="text-white font-bold text-xs">
+                                    {job.salary}
+                                  </span>
+                                  <span className="text-white/70 text-xs">
+                                    {job.jobType}
+                                  </span>
+                                </div>
+                              </div>
+                            </motion.div>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               )}
-            </AnimatePresence>
-          </div>
-        )}
 
-        {/* Main Job List */}
-        <div className="mt-4">
-          <div className="flex items-center justify-between mb-3 px-4">
-            <h3 className="font-bold text-foreground text-sm flex items-center gap-2">
-              <Briefcase size={15} style={{ color: "oklch(0.52 0.135 38)" }} />
-              All Jobs
-            </h3>
-            {filteredJobs.length > MAIN_LIST_DEFAULT && (
-              <button
-                type="button"
-                onClick={() => setMainListExpanded((v) => !v)}
-                className="flex items-center gap-1 text-xs font-semibold px-3 py-1 rounded-full"
-                style={{
-                  color: "oklch(0.52 0.135 38)",
-                  background: "oklch(0.95 0.032 68)",
-                }}
-                data-ocid="jobs.main_list.toggle"
-              >
-                {mainListExpanded ? (
-                  <>
-                    Show Less <ChevronUp size={13} />
-                  </>
-                ) : (
-                  <>
-                    See All ({filteredJobs.length - MAIN_LIST_DEFAULT}){" "}
-                    <ChevronDown size={13} />
-                  </>
-                )}
-              </button>
-            )}
-          </div>
-          {filteredJobs.length === 0 ? (
-            <div
-              className="flex flex-col items-center justify-center py-10 text-muted-foreground px-4"
-              data-ocid="jobs.empty_state"
-            >
-              <Briefcase size={36} className="mb-3 opacity-40" />
-              <p className="text-sm font-medium">No jobs found</p>
-              <p className="text-xs mt-1">
-                Try a different category or search term
-              </p>
-            </div>
-          ) : (
-            <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-3 px-4">
-              {(mainListExpanded
-                ? filteredJobs
-                : filteredJobs.slice(0, MAIN_LIST_DEFAULT)
-              ).map((job, idx) => (
-                <CompactJobCard
-                  key={job.id}
-                  job={job}
-                  index={idx}
-                  saved={savedJobs.includes(job.id)}
-                  onSave={toggleSave}
-                  onOpen={setSelectedJob}
-                />
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Skill-Based Jobs */}
-        {activeCategory === "All" && (
-          <div className="mt-6">
-            <div className="px-4 mb-3">
-              <h3 className="font-bold text-foreground text-sm flex items-center gap-2">
-                <Wrench size={15} style={{ color: "oklch(0.52 0.135 38)" }} />
-                Skill-Based Opportunities
-              </h3>
-            </div>
-            <div className="flex gap-3 px-4 overflow-x-auto scrollbar-hide pb-2">
-              {SKILL_CHIPS.map(({ label, icon: Icon }) => (
-                <button
-                  type="button"
-                  key={label}
-                  className="flex-shrink-0 flex flex-col items-center gap-1.5 px-4 py-3 rounded-2xl bg-card cursor-pointer"
-                  style={{
-                    boxShadow: "0 2px 10px rgba(0,0,0,0.07)",
-                    border: "1px solid oklch(0.89 0.032 68)",
-                  }}
-                  data-ocid="jobs.tab"
-                >
-                  <Icon size={20} style={{ color: "oklch(0.52 0.135 38)" }} />
-                  <span className="text-xs font-semibold text-foreground">
-                    {label}
-                  </span>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Government Jobs */}
-        {(activeCategory === "All" || activeCategory === "Government Jobs") && (
-          <div className="mt-6">
-            <div className="px-4 mb-3 flex items-center gap-2">
-              <Building2 size={15} style={{ color: "oklch(0.52 0.135 38)" }} />
-              <h3 className="font-bold text-foreground text-sm">
-                Government Jobs
-              </h3>
-              <Badge className="text-xs bg-amber-100 text-amber-700 border-0">
-                Official
-              </Badge>
-            </div>
-            <div className="flex gap-3 px-4 overflow-x-auto scrollbar-hide pb-2">
-              {GOVT_JOBS.map((g, i) => (
-                <div
-                  key={g.id}
-                  className="flex-shrink-0 w-56 bg-card rounded-2xl p-4"
-                  style={{
-                    boxShadow: "0 4px 14px rgba(0,0,0,0.08)",
-                    border: "1px solid oklch(0.89 0.032 68)",
-                  }}
-                  data-ocid={`jobs.govt.item.${i + 1}`}
-                >
-                  <div className="flex items-start gap-2 mb-2">
-                    <Building2
-                      size={16}
+              {/* Main Job List */}
+              <div className="mt-4">
+                <div className="flex items-center justify-between mb-3 px-4">
+                  <h3 className="font-bold text-foreground text-sm flex items-center gap-2">
+                    <Briefcase
+                      size={15}
                       style={{ color: "oklch(0.52 0.135 38)" }}
                     />
-                    <div>
-                      <p className="font-bold text-foreground text-xs leading-tight">
-                        {g.title}
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-0.5">
-                        {g.dept}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex justify-between items-center text-xs text-muted-foreground mt-2">
-                    <span>📅 {g.lastDate}</span>
-                    <span className="text-green-600 font-semibold">
-                      {g.posts}
-                    </span>
-                  </div>
-                  <button
-                    type="button"
-                    className="mt-3 w-full py-1.5 rounded-xl text-xs font-bold text-white"
-                    style={{ background: "oklch(0.52 0.135 38)" }}
-                    data-ocid="jobs.secondary_button"
-                  >
-                    View Details
-                  </button>
+                    All Jobs
+                  </h3>
+                  {filteredJobs.length > MAIN_LIST_DEFAULT && (
+                    <button
+                      type="button"
+                      onClick={() => setMainListExpanded((v) => !v)}
+                      className="flex items-center gap-1 text-xs font-semibold px-3 py-1 rounded-full"
+                      style={{
+                        color: "oklch(0.52 0.135 38)",
+                        background: "oklch(0.95 0.032 68)",
+                      }}
+                      data-ocid="jobs.main_list.toggle"
+                    >
+                      {mainListExpanded ? (
+                        <>
+                          Show Less <ChevronUp size={13} />
+                        </>
+                      ) : (
+                        <>
+                          See All ({filteredJobs.length - MAIN_LIST_DEFAULT}){" "}
+                          <ChevronDown size={13} />
+                        </>
+                      )}
+                    </button>
+                  )}
                 </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Nearby Jobs */}
-        {activeCategory === "All" && (
-          <div className="mt-6 px-4 mb-4">
-            <div className="flex items-center gap-2 mb-3">
-              <MapPin size={15} style={{ color: "oklch(0.52 0.135 38)" }} />
-              <h3 className="font-bold text-foreground text-sm">Nearby Jobs</h3>
-            </div>
-            {/* Always-visible first 2 */}
-            <div className="space-y-3">
-              {visibleNearby.slice(0, NEARBY_DEFAULT).map((job, i) => (
-                <button
-                  type="button"
-                  key={`nearby-${job.id}`}
-                  className="flex items-center gap-3 bg-card rounded-xl p-3 cursor-pointer w-full text-left"
-                  style={{
-                    boxShadow: "0 2px 10px rgba(0,0,0,0.06)",
-                    border: "1px solid oklch(0.89 0.032 68)",
-                  }}
-                  onClick={() => setSelectedJob(job)}
-                  data-ocid={`jobs.nearby.item.${i + 1}`}
-                >
+                {filteredJobs.length === 0 ? (
                   <div
-                    className="w-9 h-9 rounded-xl flex items-center justify-center text-white font-bold text-xs flex-shrink-0"
-                    style={{ background: job.companyColor }}
+                    className="flex flex-col items-center justify-center py-10 text-muted-foreground px-4"
+                    data-ocid="jobs.empty_state"
                   >
-                    {job.companyInitials}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-foreground text-xs truncate">
-                      {job.title}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {job.location} · {job.salary}
+                    <Briefcase size={36} className="mb-3 opacity-40" />
+                    <p className="text-sm font-medium">No jobs found</p>
+                    <p className="text-xs mt-1">
+                      Try a different category or search term
                     </p>
                   </div>
-                  <ChevronRight
-                    size={14}
-                    className="text-muted-foreground flex-shrink-0"
-                  />
-                </button>
-              ))}
-            </div>
-            {/* Expanded extra nearby */}
-            <AnimatePresence>
-              {nearbyExpanded && extraNearby.length > 0 && (
-                <motion.div
-                  key="nearby-extra"
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.3, ease: "easeInOut" }}
-                  style={{ overflow: "hidden" }}
-                >
-                  <div className="space-y-3 pt-3">
-                    {extraNearby.map((job, i) => (
+                ) : (
+                  <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-3 px-4">
+                    {(mainListExpanded
+                      ? filteredJobs
+                      : filteredJobs.slice(0, MAIN_LIST_DEFAULT)
+                    ).map((job, idx) => (
+                      <CompactJobCard
+                        key={job.id}
+                        job={job}
+                        index={idx}
+                        saved={savedJobs.includes(job.id)}
+                        onSave={toggleSave}
+                        onOpen={setSelectedJob}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Skill-Based Jobs */}
+              {activeCategory === "All" && (
+                <div className="mt-6">
+                  <div className="px-4 mb-3">
+                    <h3 className="font-bold text-foreground text-sm flex items-center gap-2">
+                      <Wrench
+                        size={15}
+                        style={{ color: "oklch(0.52 0.135 38)" }}
+                      />
+                      Skill-Based Opportunities
+                    </h3>
+                  </div>
+                  <div className="flex gap-3 px-4 overflow-x-auto scrollbar-hide pb-2">
+                    {SKILL_CHIPS.map(({ label, icon: Icon }) => (
                       <button
                         type="button"
-                        key={`nearby-extra-${job.id}`}
+                        key={label}
+                        className="flex-shrink-0 flex flex-col items-center gap-1.5 px-4 py-3 rounded-2xl bg-card cursor-pointer"
+                        style={{
+                          boxShadow: "0 2px 10px rgba(0,0,0,0.07)",
+                          border: "1px solid oklch(0.89 0.032 68)",
+                        }}
+                        data-ocid="jobs.tab"
+                      >
+                        <Icon
+                          size={20}
+                          style={{ color: "oklch(0.52 0.135 38)" }}
+                        />
+                        <span className="text-xs font-semibold text-foreground">
+                          {label}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Government Jobs */}
+              {(activeCategory === "All" ||
+                activeCategory === "Government Jobs") && (
+                <div className="mt-6">
+                  <div className="px-4 mb-3 flex items-center gap-2">
+                    <Building2
+                      size={15}
+                      style={{ color: "oklch(0.52 0.135 38)" }}
+                    />
+                    <h3 className="font-bold text-foreground text-sm">
+                      Government Jobs
+                    </h3>
+                    <Badge className="text-xs bg-amber-100 text-amber-700 border-0">
+                      Official
+                    </Badge>
+                  </div>
+                  <div className="flex gap-3 px-4 overflow-x-auto scrollbar-hide pb-2">
+                    {GOVT_JOBS.map((g, i) => (
+                      <div
+                        key={g.id}
+                        className="flex-shrink-0 w-56 bg-card rounded-2xl p-4"
+                        style={{
+                          boxShadow: "0 4px 14px rgba(0,0,0,0.08)",
+                          border: "1px solid oklch(0.89 0.032 68)",
+                        }}
+                        data-ocid={`jobs.govt.item.${i + 1}`}
+                      >
+                        <div className="flex items-start gap-2 mb-2">
+                          <Building2
+                            size={16}
+                            style={{ color: "oklch(0.52 0.135 38)" }}
+                          />
+                          <div>
+                            <p className="font-bold text-foreground text-xs leading-tight">
+                              {g.title}
+                            </p>
+                            <p className="text-xs text-muted-foreground mt-0.5">
+                              {g.dept}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex justify-between items-center text-xs text-muted-foreground mt-2">
+                          <span>📅 {g.lastDate}</span>
+                          <span className="text-green-600 font-semibold">
+                            {g.posts}
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          className="mt-3 w-full py-1.5 rounded-xl text-xs font-bold text-white"
+                          style={{ background: "oklch(0.52 0.135 38)" }}
+                          data-ocid="jobs.secondary_button"
+                        >
+                          View Details
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Nearby Jobs */}
+              {activeCategory === "All" && (
+                <div className="mt-6 px-4 mb-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <MapPin
+                      size={15}
+                      style={{ color: "oklch(0.52 0.135 38)" }}
+                    />
+                    <h3 className="font-bold text-foreground text-sm">
+                      Nearby Jobs
+                    </h3>
+                  </div>
+                  {/* Always-visible first 2 */}
+                  <div className="space-y-3">
+                    {visibleNearby.slice(0, NEARBY_DEFAULT).map((job, i) => (
+                      <button
+                        type="button"
+                        key={`nearby-${job.id}`}
                         className="flex items-center gap-3 bg-card rounded-xl p-3 cursor-pointer w-full text-left"
                         style={{
                           boxShadow: "0 2px 10px rgba(0,0,0,0.06)",
                           border: "1px solid oklch(0.89 0.032 68)",
                         }}
                         onClick={() => setSelectedJob(job)}
-                        data-ocid={`jobs.nearby.item.${NEARBY_DEFAULT + i + 1}`}
+                        data-ocid={`jobs.nearby.item.${i + 1}`}
                       >
                         <div
                           className="w-9 h-9 rounded-xl flex items-center justify-center text-white font-bold text-xs flex-shrink-0"
@@ -1517,48 +1664,112 @@ export default function JobFeedSection() {
                       </button>
                     ))}
                   </div>
-                </motion.div>
+                  {/* Expanded extra nearby */}
+                  <AnimatePresence>
+                    {nearbyExpanded && extraNearby.length > 0 && (
+                      <motion.div
+                        key="nearby-extra"
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                        style={{ overflow: "hidden" }}
+                      >
+                        <div className="space-y-3 pt-3">
+                          {extraNearby.map((job, i) => (
+                            <button
+                              type="button"
+                              key={`nearby-extra-${job.id}`}
+                              className="flex items-center gap-3 bg-card rounded-xl p-3 cursor-pointer w-full text-left"
+                              style={{
+                                boxShadow: "0 2px 10px rgba(0,0,0,0.06)",
+                                border: "1px solid oklch(0.89 0.032 68)",
+                              }}
+                              onClick={() => setSelectedJob(job)}
+                              data-ocid={`jobs.nearby.item.${NEARBY_DEFAULT + i + 1}`}
+                            >
+                              <div
+                                className="w-9 h-9 rounded-xl flex items-center justify-center text-white font-bold text-xs flex-shrink-0"
+                                style={{ background: job.companyColor }}
+                              >
+                                {job.companyInitials}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="font-semibold text-foreground text-xs truncate">
+                                  {job.title}
+                                </p>
+                                <p className="text-xs text-muted-foreground">
+                                  {job.location} · {job.salary}
+                                </p>
+                              </div>
+                              <ChevronRight
+                                size={14}
+                                className="text-muted-foreground flex-shrink-0"
+                              />
+                            </button>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                  {/* See All / Show Less toggle */}
+                  {extraNearby.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => setNearbyExpanded((v) => !v)}
+                      className="mt-3 w-full flex items-center justify-center gap-1 py-2 rounded-xl text-xs font-semibold"
+                      style={{
+                        color: "oklch(0.52 0.135 38)",
+                        border: "1px dashed oklch(0.70 0.08 38)",
+                      }}
+                      data-ocid="jobs.nearby.toggle"
+                    >
+                      {nearbyExpanded ? (
+                        <>
+                          Show Less <ChevronUp size={13} />
+                        </>
+                      ) : (
+                        <>
+                          See All ({nearbyJobs.length}){" "}
+                          <ChevronDown size={13} />
+                        </>
+                      )}
+                    </button>
+                  )}
+                </div>
               )}
-            </AnimatePresence>
-            {/* See All / Show Less toggle */}
-            {extraNearby.length > 0 && (
-              <button
-                type="button"
-                onClick={() => setNearbyExpanded((v) => !v)}
-                className="mt-3 w-full flex items-center justify-center gap-1 py-2 rounded-xl text-xs font-semibold"
-                style={{
-                  color: "oklch(0.52 0.135 38)",
-                  border: "1px dashed oklch(0.70 0.08 38)",
-                }}
-                data-ocid="jobs.nearby.toggle"
-              >
-                {nearbyExpanded ? (
-                  <>
-                    Show Less <ChevronUp size={13} />
-                  </>
-                ) : (
-                  <>
-                    See All ({nearbyJobs.length}) <ChevronDown size={13} />
-                  </>
-                )}
-              </button>
-            )}
-          </div>
-        )}
 
-        {/* Floating Post a Job button */}
-        <motion.button
-          whileTap={{ scale: 0.95 }}
-          onClick={() => setPostJobOpen(true)}
-          className="absolute bottom-4 right-4 flex items-center gap-2 px-4 py-2.5 rounded-2xl text-white font-bold text-sm shadow-lg"
-          style={{
-            background: "oklch(0.52 0.135 38)",
-            boxShadow: "0 6px 20px rgba(0,0,0,0.2)",
-          }}
-          data-ocid="jobs.upload_button"
-        >
-          <Plus size={16} /> Post a Job
-        </motion.button>
+              {/* Floating Post a Job button */}
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setPostJobOpen(true)}
+                className="absolute bottom-4 right-4 flex items-center gap-2 px-4 py-2.5 rounded-2xl text-white font-bold text-sm shadow-lg"
+                style={{
+                  background: "oklch(0.52 0.135 38)",
+                  boxShadow: "0 6px 20px rgba(0,0,0,0.2)",
+                }}
+                data-ocid="jobs.upload_button"
+              >
+                <Plus size={16} /> Post a Job
+              </motion.button>
+              {/* Show Less at bottom of expanded */}
+              <div className="px-4 pb-4 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setSectionExpanded(false)}
+                  className="w-full flex items-center justify-center gap-1.5 py-2 rounded-xl text-sm font-semibold"
+                  style={{
+                    border: "1.5px solid oklch(0.70 0.08 38)",
+                    color: "oklch(0.52 0.135 38)",
+                  }}
+                  data-ocid="jobs.toggle"
+                >
+                  Show Less <ChevronUp size={14} />
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Overlays */}

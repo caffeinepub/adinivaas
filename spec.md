@@ -1,42 +1,24 @@
-# Adinivaas – Jobs Section Redesign
+# Adinivaas
 
 ## Current State
-JobFeedSection.tsx is a simple horizontal scroll grid of image-based job cards with just a title, company name, and image. No filters, no categories, no detail view.
+The Jobs section is a full, expanded section with subcategory tabs, filter/sort system, featured jobs, nearby jobs, skill-based, government jobs, all jobs horizontal scroll -- displayed in full on the home page.
 
 ## Requested Changes (Diff)
 
 ### Add
-- Subcategory navigation: horizontal scrollable pill chips (Full-Time, Part-Time, Freelance/Gigs, Internships, Remote Jobs, Local Jobs, Government Jobs, Skill-Based Work). Active = brown, inactive = light grey.
-- Search icon and Filter icon in section header
-- Filter drawer: Location, Job Type, Qualification, Salary Range, Industry; Sorting: Latest, Most Relevant, Highest Salary, Nearby Jobs
-- Redesigned job cards (vertical list): company logo placeholder, Job Title (bold), Company Name, Location, Salary, Job Type badge, 1-line description, tags (Urgent/Remote/Verified), "Apply Now" CTA button
-- Featured Jobs horizontal scroll section at top
-- Skill-Based Jobs section (Driver, Electrician, Designer, Teacher, Daily Wage)
-- Government Jobs dedicated section
-- Nearby Jobs section
-- Job Detail full-screen overlay on card tap: title, company, full description, responsibilities, requirements, salary & benefits; actions: Apply Now, Save Job, Share
-- Floating "Post a Job" button (bottom right of section)
-- Post a Job form: job title, salary, location, description, contact details
-- Verified badge on trusted employers
-- Report job button
-- Quick Apply via WhatsApp button
-- Save job (heart) interaction
+- A compact Jobs summary on the home page showing key job highlights directly (e.g., 2-3 featured job cards in horizontal scroll, a quick count/summary line like "42 new jobs this week", and a quick-filter row of top job categories)
+- A "View All Jobs" or "See More Jobs" CTA button that expands the full Jobs section
 
 ### Modify
-- Replace existing horizontal image-card grid with new vertical list card layout as primary
-- Section title stays "Jobs" with Briefcase icon
+- Jobs section starts fully minimized/collapsed by default on the home page -- only showing a compact preview (header, 2-3 highlight cards, quick stats, and a "See All" button)
+- Full Jobs section (subcategory nav, filters, all subsections) slides down/expands when user taps "See All Jobs"
 
 ### Remove
-- Old horizontal image-scroll cards
+- Nothing removed, just collapsed by default
 
 ## Implementation Plan
-1. Replace JobFeedSection.tsx entirely with a rich redesigned component
-2. Subcategory pill navigation at top
-3. Featured Jobs horizontal scroll row
-4. Vertical list of job cards with full card content
-5. Skill-Based Jobs mini section
-6. Government Jobs mini section
-7. Nearby Jobs mini section
-8. Job Detail full-screen overlay
-9. Filter drawer
-10. Post a Job floating button + form overlay
+1. In JobFeedSection.tsx: add a `minimized` state (default true)
+2. In minimized state: show a compact header with job count/stats, 2-3 featured job cards in horizontal scroll, top category chips, and a "See All Jobs" CTA
+3. In expanded state: show the full existing Jobs UI
+4. Wrap expansion in AnimatePresence for smooth slide-down
+5. The compact preview should have enough info to be useful -- job title, company, salary, location visible even in minimized state

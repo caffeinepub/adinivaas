@@ -1,4 +1,9 @@
-import { HeartHandshake, MessageCircle } from "lucide-react";
+import {
+  CheckCircle2,
+  HeartHandshake,
+  MapPin,
+  MessageCircle,
+} from "lucide-react";
 import { motion } from "motion/react";
 import FeedSection from "./FeedSection";
 
@@ -11,6 +16,9 @@ const TEASER_PROFILES = [
     avatar: "https://picsum.photos/seed/spriya1/400/600",
     distance: "8 km away",
     qualification: "B.A. Arts",
+    verified: true,
+    totem: "Eagle",
+    faith: "Sarna",
     matchedInterests: ["🎵 Music", "🌿 Nature"],
     matchedHobbies: ["🏺 Pottery"],
   },
@@ -22,6 +30,9 @@ const TEASER_PROFILES = [
     avatar: "https://picsum.photos/seed/sarjun2/400/600",
     distance: "23 km away",
     qualification: "12th Pass",
+    verified: false,
+    totem: "Tiger",
+    faith: "Hindu",
     matchedInterests: ["🎨 Crafts", "📖 Folklore"],
     matchedHobbies: ["🏹 Archery"],
   },
@@ -33,6 +44,9 @@ const TEASER_PROFILES = [
     avatar: "https://picsum.photos/seed/smeena3/400/600",
     distance: "45 km away",
     qualification: "Diploma - Nursing",
+    verified: true,
+    totem: "Deer",
+    faith: "Sarna",
     matchedInterests: ["💃 Dance", "🌿 Nature"],
     matchedHobbies: ["🍳 Cooking"],
   },
@@ -44,9 +58,8 @@ export default function TribalSangiSection({
   return (
     <FeedSection title="Tribal Sangi" icon={HeartHandshake}>
       <div className="px-4 pb-2">
-        {/* Section subtitle */}
-        <p className="text-xs mb-3" style={{ color: "oklch(0.50 0.10 145)" }}>
-          Find your tribal match 💞
+        <p className="text-xs mb-3" style={{ color: "oklch(0.52 0.18 30)" }}>
+          Discover meaningful tribal connections 💞
         </p>
 
         {/* Teaser Profile Cards */}
@@ -54,17 +67,19 @@ export default function TribalSangiSection({
           className="flex gap-3 overflow-x-auto pb-2"
           style={{ scrollbarWidth: "none" }}
         >
-          {TEASER_PROFILES.map((profile) => (
+          {TEASER_PROFILES.map((profile, idx) => (
             <motion.div
               key={profile.id}
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              className="flex-shrink-0 rounded-2xl overflow-hidden bg-white shadow-sm"
+              transition={{ delay: idx * 0.07 }}
+              className="flex-shrink-0 rounded-2xl overflow-hidden shadow-sm"
               style={{
                 width: "175px",
-                border: "1px solid oklch(0.88 0.05 145)",
-                borderLeftWidth: "4px",
-                borderLeftColor: "oklch(0.55 0.16 145)",
+                background: "oklch(0.97 0.02 75)",
+                border: "1px solid oklch(0.88 0.05 55)",
+                borderTopWidth: "3px",
+                borderTopColor: "oklch(0.52 0.18 30)",
               }}
             >
               {/* Photo */}
@@ -76,11 +91,23 @@ export default function TribalSangiSection({
                 />
                 {/* Distance badge */}
                 <div
-                  className="absolute top-2 right-2 flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold"
-                  style={{ background: "oklch(0.40 0.14 145)", color: "white" }}
+                  className="absolute top-2 right-2 flex items-center gap-0.5 px-2 py-0.5 rounded-full text-xs font-semibold"
+                  style={{ background: "oklch(0.52 0.18 30)", color: "white" }}
                 >
-                  📍 {profile.distance}
+                  <MapPin size={9} /> {profile.distance}
                 </div>
+                {/* Verified */}
+                {profile.verified && (
+                  <div
+                    className="absolute top-2 left-2 flex items-center gap-0.5 px-2 py-0.5 rounded-full text-xs font-semibold"
+                    style={{
+                      background: "rgba(34,197,94,0.85)",
+                      color: "white",
+                    }}
+                  >
+                    <CheckCircle2 size={9} /> Verified
+                  </div>
+                )}
               </div>
 
               {/* Content */}
@@ -88,36 +115,47 @@ export default function TribalSangiSection({
                 {/* Name + Age */}
                 <div className="flex items-center justify-between mb-1">
                   <span
-                    className="font-bold text-sm"
-                    style={{ color: "oklch(0.25 0.08 55)" }}
+                    className="font-black text-sm"
+                    style={{ color: "oklch(0.28 0.10 55)" }}
                   >
                     {profile.name}, {profile.age}
                   </span>
                 </div>
 
-                {/* Tribe badge */}
-                <span
-                  className="text-xs px-2 py-0.5 rounded-full font-semibold"
-                  style={{
-                    background: "oklch(0.88 0.04 55)",
-                    color: "oklch(0.40 0.10 55)",
-                  }}
-                >
-                  🏡 {profile.tribe}
-                </span>
+                {/* Tribe + totem row */}
+                <div className="flex flex-wrap gap-1 mb-1.5">
+                  <span
+                    className="text-xs px-2 py-0.5 rounded-full font-semibold"
+                    style={{
+                      background: "oklch(0.90 0.05 55)",
+                      color: "oklch(0.40 0.10 55)",
+                    }}
+                  >
+                    🏕 {profile.tribe}
+                  </span>
+                  <span
+                    className="text-xs px-2 py-0.5 rounded-full font-semibold"
+                    style={{
+                      background: "oklch(0.92 0.04 38)",
+                      color: "oklch(0.40 0.12 38)",
+                    }}
+                  >
+                    🦅 {profile.totem}
+                  </span>
+                </div>
 
-                {/* Qualification */}
+                {/* Faith + qualification */}
                 <p
-                  className="text-xs mt-2 mb-1.5"
+                  className="text-xs mb-1"
                   style={{ color: "oklch(0.50 0.06 55)" }}
                 >
-                  🎓 {profile.qualification}
+                  🙏 {profile.faith} &nbsp;·&nbsp; 🎓 {profile.qualification}
                 </p>
 
                 {/* Matched Interests */}
                 <p
-                  className="text-xs font-semibold mb-1"
-                  style={{ color: "oklch(0.40 0.14 145)" }}
+                  className="text-xs font-bold mb-1"
+                  style={{ color: "oklch(0.52 0.18 30)" }}
                 >
                   Interests Match
                 </p>
@@ -127,8 +165,8 @@ export default function TribalSangiSection({
                       key={interest}
                       className="text-xs px-1.5 py-0.5 rounded-full font-medium"
                       style={{
-                        background: "oklch(0.93 0.04 145)",
-                        color: "oklch(0.35 0.12 145)",
+                        background: "oklch(0.90 0.04 145)",
+                        color: "oklch(0.30 0.12 145)",
                       }}
                     >
                       {interest}
@@ -140,8 +178,8 @@ export default function TribalSangiSection({
                 {profile.matchedHobbies.length > 0 && (
                   <>
                     <p
-                      className="text-xs font-semibold mb-1"
-                      style={{ color: "oklch(0.42 0.08 55)" }}
+                      className="text-xs font-bold mb-1"
+                      style={{ color: "oklch(0.40 0.10 55)" }}
                     >
                       Hobbies Match
                     </p>
@@ -151,7 +189,7 @@ export default function TribalSangiSection({
                           key={hobby}
                           className="text-xs px-1.5 py-0.5 rounded-full font-medium"
                           style={{
-                            background: "oklch(0.88 0.04 55)",
+                            background: "oklch(0.90 0.05 55)",
                             color: "oklch(0.40 0.10 55)",
                           }}
                         >
@@ -162,19 +200,33 @@ export default function TribalSangiSection({
                   </>
                 )}
 
-                {/* Message button */}
+                {/* View Profile button */}
                 <button
                   type="button"
                   onClick={onOpenSangi}
-                  className="w-full py-1.5 rounded-full text-xs font-semibold text-white flex items-center justify-center gap-1 mt-1"
-                  style={{ background: "oklch(0.55 0.16 145)" }}
+                  className="w-full py-1.5 rounded-full text-xs font-bold text-white flex items-center justify-center gap-1 mt-1"
+                  style={{ background: "oklch(0.52 0.18 30)" }}
                   data-ocid="tribal_sangi.primary_button"
                 >
-                  <MessageCircle size={12} /> Message
+                  <MessageCircle size={11} /> View Profile
                 </button>
               </div>
             </motion.div>
           ))}
+        </div>
+
+        {/* Verification notice */}
+        <div
+          className="mt-3 px-3 py-2 rounded-xl flex items-center gap-2"
+          style={{ background: "oklch(0.93 0.04 38)" }}
+        >
+          <CheckCircle2 size={14} style={{ color: "oklch(0.52 0.18 30)" }} />
+          <p
+            className="text-xs font-semibold"
+            style={{ color: "oklch(0.40 0.12 38)" }}
+          >
+            Aadhaar Card / ST Certificate is mandatory for verification
+          </p>
         </div>
 
         {/* See More Options button */}
@@ -182,12 +234,8 @@ export default function TribalSangiSection({
           <button
             type="button"
             onClick={onOpenSangi}
-            className="px-5 py-2 rounded-full text-sm font-semibold border-2 transition-all"
-            style={{
-              borderColor: "oklch(0.55 0.16 145)",
-              color: "oklch(0.40 0.14 145)",
-              background: "oklch(0.97 0.02 145)",
-            }}
+            className="px-6 py-2.5 rounded-full text-sm font-bold text-white transition-all"
+            style={{ background: "oklch(0.35 0.10 55)" }}
             data-ocid="tribal_sangi.secondary_button"
           >
             See More Options →
